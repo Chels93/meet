@@ -59,3 +59,11 @@ USER STORIES AND SCENARIOS: (Gherkin Syntax)
     When the user selects to view details of an event, 
     Then there will appear a visual representation of when and where Events are occurring for better accessibility. 
 
+SERVERLESS FUNCTIONS PURPOSE:
+- Optimize token management 
+- Prioritize scalability and backend management
+- Ensure responsiveness by default with Lambda functions
+- Enhance user experience with on demand functions to fetch upcoming events 
+- Facilitate ideal integration of calendar data into frontend by having serverless functions interact with REACT PWA via API endpoints 
+- Efficiently utilize cloud resources 
+
