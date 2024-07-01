@@ -34,5 +34,34 @@ module.exports.getAuthURL = async (event) => {
   };
 };
 
+module.exports.getAccessToken = async (event) => {
+    const code = decodeURIComponent(`${event.pathParameters.code}`);
+
+    return new Promise((resolve, reject) => {
+        oAuth2Client.getToken(code, (error, response) => {
+            if (error) {
+                return reject(error);
+            }
+            return resolve(response);
+        });
+    })
+        .then((results) => {
+            return {
+                statusCode: 200,
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Credentials": true, 
+                },
+                body: JSON.stringify(results),
+            };
+        })
+        .catch((error) => {
+            return {
+                statusCode: 500,
+                body: JSON.stringify(error),
+            };
+        });
+};
+
 // Use this code if you don't use the http event with the LAMBDA-PROXY integration
 // return { message: 'Go Serverless v1.0! Your function executed successfully!', event };
