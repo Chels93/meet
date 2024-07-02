@@ -41,6 +41,11 @@
       </label>
       <button id="getToken">Get Token</button>
       <p id="accessToken"></p>
+
+      <!--Step 3-->
+      <h4>Step 3: Get the calendar evetns using your access token</h4>
+      <button id="getEvents">Get Events</button>
+      <p id="events"></p>
     </main>
 
     <!-- New line of Code for Script starts here -->
@@ -85,6 +90,23 @@
           })
           .then(function (json) {
             accessTokenElement.innerText = JSON.stringify(json);
+          });
+      };
+
+      const getEvents = document.getElementById("getEvents");
+      const events = document.getElementById("events");
+      const getCalendarEvents =
+        "https://i8ud6jtxbc.execute-api.us-east-1.amazonaws.com/dev/api/get-events/{access_token}";
+
+      getEvents.onclick = function () {
+        const { access_token } = JSON.parse(accessTokenElement.innerText);
+        const eventRequest = getCalendarEvents + "/" + access_token;
+        fetch(eventRequest)
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (json) {
+            events.innerText = JSON.stringify(json, null, 2);
           });
       };
     </script>
