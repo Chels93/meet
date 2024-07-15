@@ -39,7 +39,7 @@ module.exports.getAccessToken = async (event) => {
   try {
     const res = await oAuth2Client.getToken(code);
 
-    console.log(res.tokens);
+    console.log("Access token obtained:", res.tokens);
     return {
       statusCode: 200,
       headers: getResponseHeaders(),
@@ -49,13 +49,13 @@ module.exports.getAccessToken = async (event) => {
     return {
       statusCode: 500,
       headers: getResponseHeaders(),
-      body: JSON.stringify(e),
+      body: JSON.stringify({ error: e.message, details: e }),
     };
   }
 };
 
 module.exports.getCalendarEvents = async (event) => {
-  console.log("Event received:", event);
+  console.log("Event received:", JSON.stringify(event, null, 2));
 
   if (!event.pathParameters || !event.pathParameters.access_token) {
     return {
@@ -68,6 +68,7 @@ module.exports.getCalendarEvents = async (event) => {
   const access_token = decodeURIComponent(
     `${event.pathParameters.access_token}`
   );
+console.log("Access token received:", access_token);
 
   try {
     oAuth2Client.setCredentials({ access_token });
@@ -91,7 +92,7 @@ module.exports.getCalendarEvents = async (event) => {
     return {
       statusCode: 500,
       headers: getResponseHeaders(),
-      body: JSON.stringify({ error: error.message }),
+      body: JSON.stringify({ error: error.message, details: error }),
     };
   }
 };
