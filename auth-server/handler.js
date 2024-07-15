@@ -57,7 +57,7 @@ module.exports.getAccessToken = async (event) => {
 module.exports.getCalendarEvents = async (event) => {
   console.log("Event received:", event);
 
-  if (!event.pathParamters || !event.pathParameters.access_token) {
+  if (!event.pathParameters || !event.pathParameters.access_token) {
     return {
       statusCode: 400,
       headers: getResponseHeaders(),
