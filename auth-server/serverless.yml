@@ -16,21 +16,21 @@ functions:
     handler: handler.getAuthURL
     events:
       - http:
-          path: get-auth-url
+          path: api/get-auth-url
           method: get
           cors: true
   getAccessToken:
     handler: handler.getAccessToken
     events: 
       - http: 
-          path: token/{code}
+          path: api/token/{code}
           method: get
           cors: true
   getCalendarEvents:
     handler: handler.getCalendarEvents
     events:
       - http: 
-          path: get-events/{access_token}
+          path: api/get-events/{access_token}
           method: get
           cors: true
 
