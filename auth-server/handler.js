@@ -14,7 +14,14 @@ const oAuth2Client = new google.auth.OAuth2(
   redirect_uris[0]
 );
 
-module.exports.getAuthURL = async (event) => {
+const getResponseHeaders = () => ({
+  "Access-Control-Allow-Origin": "http://127.0.0.1:8080",
+  "Access-Control-Allow-Credentials": true,
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+});
+
+module.exports.getAuthURL = async () => {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: "offline",
     scope: SCOPES,
@@ -22,96 +29,70 @@ module.exports.getAuthURL = async (event) => {
 
   return {
     statusCode: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Credentials": true,
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-    },
+    headers: getResponseHeaders(),
     body: JSON.stringify({
       authUrl,
-      message: "Go Serverless v1.0! Your function executed successfully!",
-      input: event,
     }),
   };
 };
 
 module.exports.getAccessToken = async (event) => {
   const code = decodeURIComponent(`${event.pathParameters.code}`);
+  try {
+    const res = await oAuth2Client.getToken(code);
 
-  return new Promise((resolve, reject) => {
-    oAuth2Client.getToken(code, (error, response) => {
-      if (error) {
-        return reject(error);
-      }
-      return resolve(response);
-    });
-  })
-    .then((results) => {
-      return {
-        statusCode: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Credentials": true,
-          "Access-Control-Allow-Headers": "Content-Type",
-          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        },
-        body: JSON.stringify(results),
-      };
-    })
-    .catch((error) => {
-      return {
-        statusCode: 500,
-        body: JSON.stringify(error),
-      };
-    });
+    console.log(res.tokens);
+    return {
+      statusCode: 200,
+      headers: getResponseHeaders(),
+      body: JSON.stringify(res.tokens),
+    };
+  } catch (e) {
+    return {
+      statusCode: 500,
+      headers: getResponseHeaders(),
+      body: JSON.stringify(e),
+    };
+  }
 };
 
 module.exports.getCalendarEvents = async (event) => {
+  console.log("Event received:", event);
+
+  if (!event.pathParamters || !event.pathParameters.access_token) {
+    return {
+      statusCode: 400,
+      headers: getResponseHeaders(),
+      body: JSON.stringify({ error: "access_token is required" }),
+    };
+  }
+
   const access_token = decodeURIComponent(
     `${event.pathParameters.access_token}`
   );
-  oAuth2Client.setCredentials({ access_token });
 
   try {
-    const response = await new Promise((resolve, reject) => {
-      calendar.events.list(
-        {
-          calendarId: CALENDAR_ID,
-          auth: oAuth2Client,
-          timeMin: new Date().toISOString(),
-          singleEvents: true,
-          orderBy: "startTime",
-        },
-        (error, response) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(response);
-          }
-        }
-      );
+    oAuth2Client.setCredentials({ access_token });
+    console.log("OAuth2 client set with credentials");
+
+    const response = await calendar.events.list({
+      calendarId: CALENDAR_ID,
+      auth: oAuth2Client,
+      timeMin: new Date().toISOString(),
+      singleEvents: true,
+      orderBy: "startTime",
     });
+    console.log("Received events:", response.data.items);
 
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Credentials": true,
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-      },
+      headers: getResponseHeaders(),
       body: JSON.stringify({ events: response.data.items }),
     };
   } catch (error) {
     return {
       statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Credentials": true,
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-      },
+      headers: getResponseHeaders(),
       body: JSON.stringify({ error: error.message }),
     };
   }

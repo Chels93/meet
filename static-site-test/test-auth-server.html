@@ -97,15 +97,10 @@
       const getCalendarEvents =
         "https://i8ud6jtxbc.execute-api.us-east-1.amazonaws.com/dev/api/get-events";
 
-      getCalendarEvents.onclick = function () {
+      getEvents.onclick = function () {
         const { access_token } = JSON.parse(accessTokenElement.innerText);
         const eventRequest = getCalendarEvents + "/" + access_token;
-        fetch(eventRequest, {
-            mode: "cors",
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-            }
-        })
+        fetch(eventRequest)
           .then(function (response) {
             return response.json();
           })
@@ -115,6 +110,5 @@
       };
       // End of Step 3
     </script>
-
   </body>
 </html>
