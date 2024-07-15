@@ -55,7 +55,7 @@ module.exports.getAccessToken = async (event) => {
 };
 
 module.exports.getCalendarEvents = async (event) => {
-  console.log("Event received:", JSON.stringify(event, null, 2));
+  console.log("Event received:", event);
 
   if (!event.pathParameters || !event.pathParameters.access_token) {
     return {
@@ -90,9 +90,9 @@ console.log("Access token received:", access_token);
     };
   } catch (error) {
     return {
-      statusCode: 500,
+      statusCode: error.response.status || 500,
       headers: getResponseHeaders(),
-      body: JSON.stringify({ error: error.message, details: error }),
+      body: JSON.stringify({ error: error.message }),
     };
   }
 };
