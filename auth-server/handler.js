@@ -12,13 +12,6 @@ const oAuth2Client = new google.auth.OAuth2(
   redirect_uris[0]
 );
 
-const getResponseHeaders = () => ({
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Credentials": true,
-  "Access-Control-Allow-Headers": "Content-Type",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-});
-
 module.exports.getAuthURL = async () => {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: "offline",
@@ -27,7 +20,10 @@ module.exports.getAuthURL = async () => {
 
   return {
     statusCode: 200,
-    headers: getResponseHeaders(),
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-COntrol-ALlow-Credentials": true,
+    },
     body: JSON.stringify({
       authUrl,
     }),
@@ -36,63 +32,71 @@ module.exports.getAuthURL = async () => {
 
 module.exports.getAccessToken = async (event) => {
   const code = decodeURIComponent(`${event.pathParameters.code}`);
-  try {
-    const res = await oAuth2Client.getToken(code);
 
-    console.log("Access token obtained:", res.tokens);
-    return {
-      statusCode: 200,
-      headers: getResponseHeaders(),
-      body: JSON.stringify(res.tokens),
-    };
-  } catch (e) {
-    return {
-      statusCode: 500,
-      headers: getResponseHeaders(),
-      body: JSON.stringify({ error: e.message, details: e }),
-    };
-  }
+  return new Promise((resolve, reject) => {
+    oAuth2Client.getToken(code, (error, response) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(response);
+    });
+  })
+    .then((results) => {
+      return {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Credentials": true,
+        },
+        body: JSON.stringify(results),
+      };
+    })
+    .catch((error) => {
+      return {
+        statusCode: 500,
+        body: JSON.stringify(error),
+      };
+    });
 };
 
 module.exports.getCalendarEvents = async (event) => {
-  console.log("Event received:", event);
-
-  if (!event.pathParameters || !event.pathParameters.access_token) {
-    return {
-      statusCode: 400,
-      headers: getResponseHeaders(),
-      body: JSON.stringify({ error: "access_token is required" }),
-    };
-  }
-
   const access_token = decodeURIComponent(
     `${event.pathParameters.access_token}`
   );
-console.log("Access token received:", access_token);
+  oAuth2Client.setCredentials({ access_token });
 
-  try {
-    oAuth2Client.setCredentials({ access_token });
-    console.log("OAuth2 client set with credentials");
-
-    const response = await calendar.events.list({
-      calendarId: CALENDAR_ID,
-      auth: oAuth2Client,
-      timeMin: new Date().toISOString(),
-      singleEvents: true,
-      orderBy: "startTime",
+  return new Promise((resolve, reject) => {
+    calendar.events.list(
+      {
+        calendarId: CALENDAR_ID,
+        auth: oAuth2Client,
+        timeMin: new Date().toISOString(),
+        singleEvents: true,
+        orderBy: "startTime",
+      },
+      (error, response) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(response);
+        }
+      }
+    );
+  })
+    .then((results) => {
+      return {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Credentials": true,
+        },
+        body: JSON.stringify(results),
+      };
+    })
+    .catch((error) => {
+      return {
+        statusCode: 500,
+        body: JSON.stringify(error),
+      };
     });
-    console.log("Received events:", response.data.items);
-
-    return {
-      statusCode: 200,
-      headers: getResponseHeaders(),
-      body: JSON.stringify({ events: response.data.items }),
-    };
-  } catch (error) {
-    return {
-      statusCode: error.response.status || 500,
-      headers: getResponseHeaders(),
-      body: JSON.stringify({ error: error.message }),
-    };
-  }
 };
