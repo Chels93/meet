@@ -13,7 +13,7 @@ const oAuth2Client = new google.auth.OAuth2(
 );
 
 const getResponseHeaders = () => ({
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "*", // Allow all origins
   "Access-Control-Allow-Credentials": true,
   "Access-Control-Allow-Headers": "Content-Type",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -68,7 +68,7 @@ module.exports.getCalendarEvents = async (event) => {
   const access_token = decodeURIComponent(
     `${event.pathParameters.access_token}`
   );
-console.log("Access token received:", access_token);
+  console.log("Access token received:", access_token);
 
   try {
     oAuth2Client.setCredentials({ access_token });
