@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const { google } = require("googleapis");
 const calendar = google.calendar("v3");
@@ -59,42 +59,45 @@ module.exports.getAccessToken = async (event) => {
 };
 
 module.exports.getCalendarEvents = async (event) => {
-    const access_token = decodeURIComponent(`${event.pathParameters.access_token}`);
-    oAuth2Client.setCredentials({ access_token });
-  
-    return new Promise((resolve, reject) => {
-      calendar.events.list(
-        {
-          calendarId: CALENDAR_ID,
-          auth: oAuth2Client,
-          timeMin: new Date().toISOString(),
-          singleEvents: true,
-          orderBy: "startTime",
-        },
-        (error, response) => {
-          if (error) {
-            return reject(error);
-          }
+  const access_token = decodeURIComponent(
+    `${event.pathParameters.access_token}`
+  );
+  oAuth2Client.setCredentials({ access_token });
+
+  return new Promise((resolve, reject) => {
+    calendar.events.list(
+      {
+        calendarId: CALENDAR_ID,
+        auth: oAuth2Client,
+        timeMin: new Date().toISOString(),
+        singleEvents: true,
+        orderBy: "startTime",
+      },
+      (error, response) => {
+        if (error) {
+          return reject(error);
+        } else {
           return resolve(response);
         }
-      );
+      }
+    );
+  })
+    .then((results) => {
+      // Respond with OAuth token
+      return {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Credentials": true,
+        },
+        body: JSON.stringify({ events: results.data.items }),
+      };
     })
-      .then((results) => {
-        // Respond with OAuth token
-        return {
-          statusCode: 200,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Credentials": true,
-          },
-          body: JSON.stringify({ events: results.data.items }),
-        };
-      })
-      .catch((error) => {
-        // Handle error
-        return {
-          statusCode: 500,
-          body: JSON.stringify(error),
-        };
-      });
-  };
+    .catch((error) => {
+      // Handle error
+      return {
+        statusCode: 500,
+        body: JSON.stringify(error),
+      };
+    });
+};
