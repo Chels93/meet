@@ -1,18 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const CitySearch = ({ allLocations }) => {
+const CitySearch = ({ allLocations, setCurrentCity }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
+  useEffect(() => {
+    setSuggestions(allLocations);
+  }, [allLocations]);
+
   const handleInputChanged = (event) => {
     const value = event.target.value;
     const filteredLocations = allLocations
-      ? allLocations.filter((location) => {
-          return location.toUpperCase().indexOf(value.toUpperCase()) > -1;
-        })
+      ? allLocations.filter((location) =>
+          location.toUpperCase().includes(value.toUpperCase())
+        )
       : [];
-
     setQuery(value);
     setSuggestions(filteredLocations);
   };
@@ -20,11 +23,12 @@ const CitySearch = ({ allLocations }) => {
   const handleItemClicked = (event) => {
     const value = event.target.textContent;
     setQuery(value);
-    setShowSuggestions(false); // to hide the list
-  };  
+    setShowSuggestions(false);
+    setCurrentCity(value);
+  };
 
   return (
-    <div id="city-search">
+    <div id="city-search" data-testid="city-search">
       <input
         type="text"
         className="city"
@@ -32,20 +36,30 @@ const CitySearch = ({ allLocations }) => {
         value={query}
         onFocus={() => setShowSuggestions(true)}
         onChange={handleInputChanged}
+        data-testid="city-search-input"
       />
-      {showSuggestions ?
+      {showSuggestions && (
         <ul className="suggestions">
-          {suggestions.map((suggestion) => {
-            return <li onClick={handleItemClicked} key={suggestion}>{suggestion}</li>
-          })}
-          <li key='See all cities' onClick={handleItemClicked}>
+          {suggestions.map((suggestion) => (
+            <li
+              onClick={handleItemClicked}
+              key={suggestion}
+              data-testid={`suggestion-${suggestion}`}
+            >
+              {suggestion}
+            </li>
+          ))}
+          <li
+            key="See all cities"
+            onClick={handleItemClicked}
+            data-testid="see-all-cities"
+          >
             <b>See all cities</b>
           </li>
         </ul>
-        : null
-      }
+      )}
     </div>
- );
+  );
 };
 
 export default CitySearch;

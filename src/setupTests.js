@@ -8,12 +8,16 @@ configure({ asyncUtilTimeout: 1000 });
 const MESSAGES_TO_IGNORE = [
   "When testing, code that causes React state updates should be wrapped into act(...):",
   "Error:",
-  "The above error occurred"
+  "The above error occurred",
+  "Warning: `ReactDOMTestUtils.act` is deprecated in favor of `React.act`"
 ];
 
-const originalError = console.error.bind(console.error);
+const originalError = console.error;
 
 console.error = (...args) => {
   const ignoreMessage = MESSAGES_TO_IGNORE.find(message => args.toString().includes(message));
   if (!ignoreMessage) originalError(...args);
 };
+
+// For handling globalThis if needed
+window.globalThis = window;

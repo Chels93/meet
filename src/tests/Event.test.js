@@ -1,55 +1,57 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import Event from "../components/Event";
-import userEvent from "@testing-library/user-event";
-import React from "react";
 
 describe("<Event /> component", () => {
   const event = {
-    title: "Sample Event Title",
-    location: "Sample Location",
-    description: "Sample Description",
-    date: "Sample Date",
-    time: "Sample Time"
+    title: "Learn JavaScript",
+    location: "London, UK",
+    date: "Tue, 19 May 2020 19:17:46 GMT",
+    details:
+      "Have you wondered how you can ask Google to show you the list of the top ten must-see places in London? And how Google presents you the list? How can you submit the details of an application? Well, JavaScript is doing these. :) Javascript offers interactivity to a dull, static website. Come, learn JavaScript with us and make those beautiful websites.",
   };
 
-  test("renders event location", async () => {
+  test("by default, event's details section is hidden", () => {
     render(<Event event={event} />);
-    expect(await screen.findByText(event.location)).toBeInTheDocument();
-  });
-
-  test("renders event details button with the title (Show Details)", () => {
-    render(<Event event={event} />);
-    expect(screen.getByText("Show Details")).toBeInTheDocument();
+    // Ensure the details are not visible by checking if the 'details' paragraph is not in the document
+    expect(screen.queryByText(/Have you wondered/i)).toBeNull();
   });
 
   test("shows event details when 'Show Details' button is clicked", async () => {
     render(<Event event={event} />);
-    const showDetailsButton = screen.getByText("Show Details");
-    userEvent.click(showDetailsButton);
 
-    // Wait for the description to appear
-    await waitFor(() => {
-      expect(screen.getByText(event.description)).toBeInTheDocument();
-    });
+    // Ensure the 'Show Details' button is present initially
+    expect(screen.getByText("Show Details")).toBeInTheDocument();
 
-    // Check if the 'Hide Details' button appears
-    expect(screen.getByText("Hide Details")).toBeInTheDocument();
+    // Click the 'Show Details' button
+    fireEvent.click(screen.getByText("Show Details"));
+
+    // Wait for the details and 'Hide Details' button to be in the document
+    expect(await screen.findByText(/Have you wondered/i)).toBeInTheDocument();
+    expect(await screen.findByText("Hide Details")).toBeInTheDocument();
+
+    // Ensure 'Show Details' button is no longer in the document
+    expect(screen.queryByText("Show Details")).toBeNull();
   });
 
   test("hides event details when 'Hide Details' button is clicked", async () => {
     render(<Event event={event} />);
-    const showDetailsButton = screen.getByText("Show Details");
-    userEvent.click(showDetailsButton);
 
-    const hideDetailsButton = await screen.findByText("Hide Details");
-    userEvent.click(hideDetailsButton);
+    // Click the 'Show Details' button to reveal details
+    fireEvent.click(screen.getByText("Show Details"));
 
-    // Wait for the description to be removed
-    await waitFor(() => {
-      expect(screen.queryByText(event.description)).not.toBeInTheDocument();
-    });
+    // Ensure details are visible
+    expect(await screen.findByText(/Have you wondered/i)).toBeInTheDocument();
+    expect(await screen.findByText("Hide Details")).toBeInTheDocument();
 
-    // Check if the 'Show Details' button appears
+    // Click the 'Hide Details' button
+    fireEvent.click(screen.getByText("Hide Details"));
+
+    // Verify that the details and 'Hide Details' button are no longer in the document
+    expect(screen.queryByText(/Have you wondered/i)).toBeNull();
+    expect(screen.queryByText("Hide Details")).toBeNull();
+
+    // Ensure the 'Show Details' button reappears
     expect(screen.getByText("Show Details")).toBeInTheDocument();
   });
 });

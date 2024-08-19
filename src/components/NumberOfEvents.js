@@ -1,31 +1,28 @@
-import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import { useState } from "react";
 
-function NumberOfEvents({ updateEventCount }) {
+const NumberOfEvents = ({ updateEventCount }) => {
   const [number, setNumber] = useState(32);
 
-  const handleChange = (event) => {
-    const newValue = event.target.value;
-    setNumber(newValue);
-    updateEventCount(newValue);
+  const handleInputChanged = (event) => {
+    const value = event.target.value;
+    setNumber(value);
+    if (updateEventCount) {
+      updateEventCount(value);
+    }
   };
 
   return (
-    <div className="number-of-events">
-      <label htmlFor="event-number">Number of Events</label>
+    <div id="number-of-events" data-testid="number-of-events">
+      <label htmlFor="number-of-events-input">Number of Events: </label>
       <input
-        aria-label="Number of events to display"
-        id="event-number"
         type="number"
+        id="number-of-events-input"
+        className="number-of-events-input"
         value={number}
-        onChange={handleChange}
+        onChange={handleInputChanged}
       />
     </div>
   );
-}
-
-NumberOfEvents.propTypes = {
-  updateEventCount: PropTypes.func.isRequired,
 };
 
 export default NumberOfEvents;
