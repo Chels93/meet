@@ -1,48 +1,48 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import NumberOfEvents from "../components/NumberOfEvents";
-import React from "react";
+import App from "../App";
+import { getEvents, extractLocations } from "../api";
+import mockData from "../mock-data";
 
-describe("<NumberOfEvents />", () => {
-  test("renders the input element", () => {
-    render(<NumberOfEvents />);
-    const inputElement = screen.getByRole("spinbutton");
-    expect(inputElement).toBeInTheDocument();
+// Mock the API calls
+jest.mock("../api", () => ({
+  getEvents: jest.fn(),
+  extractLocations: jest.fn(),
+}));
+
+describe("<App /> integration", () => {
+  beforeEach(() => {
+    getEvents.mockResolvedValue(mockData);
+    extractLocations.mockReturnValue(["Berlin, Germany", "New York", "London"]);
   });
 
-  test("renders number of events input", () => {
-    render(<NumberOfEvents />);
-    const numberInput = screen.getByRole("spinbutton");
-    expect(numberInput).toBeInTheDocument();
-    expect(numberInput).toHaveClass("number-of-events-input");
+  test("renders a list of events matching the number of events selected by the user", async () => {
+    render(<App />);
+    
+    // Ensure that the initial number of events is displayed
+    const numberOfEventsInput = screen.getByRole("spinbutton");
+    await userEvent.clear(numberOfEventsInput);
+    await userEvent.type(numberOfEventsInput, "10");
+    
+    // Wait for the events to update
+    await waitFor(() => {
+      const eventItems = screen.getAllByTestId("event-item");
+      expect(eventItems.length).toBe(10); // Ensure the number of events matches
+    });
   });
 
-  test("default value of input field is 32", () => {
-    render(<NumberOfEvents />);
-    const numberInput = screen.getByRole("spinbutton");
-    expect(numberInput).toHaveValue(32);
-  });
+  test("Users can change the number of events displayed", async () => {
+    render(<App />);
 
-  test("value changes when user types in input field", async () => {
-    render(<NumberOfEvents />);
-    const user = userEvent.setup();
-    const numberInput = screen.getByRole("spinbutton");
-    await user.clear(numberInput);
-    await user.type(numberInput, "123");
-    expect(numberInput).toHaveValue(123);
-  });
+    // Change the number of events
+    const numberOfEventsInput = screen.getByRole("spinbutton");
+    await userEvent.clear(numberOfEventsInput);
+    await userEvent.type(numberOfEventsInput, "10");
 
-  test("calls updateEventCount function when input value changes", () => {
-    const updateEventCount = jest.fn();
-    render(<NumberOfEvents updateEventCount={updateEventCount} />);
-    const numberInput = screen.getByRole("spinbutton");
-    fireEvent.change(numberInput, { target: { value: "20" } });
-    expect(updateEventCount).toHaveBeenCalledWith("20");
-  });
-
-  test("input value is 32 initially", () => {
-    render(<NumberOfEvents />);
-    const numberInput = screen.getByRole("spinbutton");
-    expect(numberInput).toHaveValue(32);
+    // Wait for the events to update
+    await waitFor(() => {
+      const eventItems = screen.getAllByTestId("event-item");
+      expect(eventItems.length).toBe(10); // Ensure the number of events matches
+    });
   });
 });

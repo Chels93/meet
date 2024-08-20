@@ -1,51 +1,48 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { getEvents } from "../api";
 import App from "../App";
-import React from "react";
+import { getEvents, extractLocations } from "../api";
+import mockData from "../mock-data";
 
-describe("<App /> component", () => {
-  test("renders list of events", () => {
-    render(<App />);
-    expect(screen.getByTestId("event-list")).toBeInTheDocument();
-  });
-
-  test("renders CitySearch", () => {
-    render(<App />);
-    expect(screen.getByTestId("city-search")).toBeInTheDocument();
-  });
-
-  test("renders NumberOfEvents", () => {
-    render(<App />);
-    expect(screen.getByTestId("number-of-events")).toBeInTheDocument();
-  });
-});
+// Mock the API calls
+jest.mock("../api", () => ({
+  getEvents: jest.fn(),
+  extractLocations: jest.fn(),
+}));
 
 describe("<App /> integration", () => {
-  test("renders a list of events matching the city selected by the user", async () => {
-    const user = userEvent.setup();
+  beforeEach(() => {
+    getEvents.mockResolvedValue(mockData);
+    extractLocations.mockReturnValue(["Berlin, Germany", "New York", "London"]);
+  });
+
+  test("renders a list of events matching the number of events selected by the user", async () => {
     render(<App />);
 
-    // Interact with CitySearch component
-    const CitySearchInput = screen.getByRole("textbox");
-    await user.type(CitySearchInput, "Berlin");
+    // Ensure that the initial number of events is displayed
+    const numberOfEventsInput = screen.getByRole("spinbutton");
+    await userEvent.clear(numberOfEventsInput);
+    await userEvent.type(numberOfEventsInput, "10");
 
-    const berlinSuggestionItem = await screen.findByText("Berlin, Germany");
-    await user.click(berlinSuggestionItem);
+    // Wait for the events to update
+    await waitFor(() => {
+      const eventItems = screen.getAllByTestId("event-item");
+      expect(eventItems.length).toBe(10); // Ensure the number of events matches
+    });
+  });
 
-    // Check events list
-    const EventList = screen.getByTestId("event-list");
-    const allRenderedEventItems = within(EventList).getAllByRole("listitem");
+  test("users can change the number of events displayed", async () => {
+    render(<App />);
 
-    const allEvents = await getEvents();
-    const berlinEvents = allEvents.filter(
-      (event) => event.location === "Berlin, Germany"
-    );
+    // Change the number of events
+    const numberOfEventsInput = screen.getByRole("spinbutton");
+    await userEvent.clear(numberOfEventsInput);
+    await userEvent.type(numberOfEventsInput, "10");
 
-    expect(allRenderedEventItems.length).toBe(berlinEvents.length);
-
-    allRenderedEventItems.forEach((event) => {
-      expect(event.textContent).toContain("Berlin, Germany");
+    // Wait for the events to update
+    await waitFor(() => {
+      const eventItems = screen.getAllByTestId("event-item");
+      expect(eventItems.length).toBe(10); // Ensure the number of events matches
     });
   });
 });

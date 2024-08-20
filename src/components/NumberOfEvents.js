@@ -1,25 +1,20 @@
-import { useState } from "react";
+// NumberOfEvents.js
+import React from "react";
 
-const NumberOfEvents = ({ updateEventCount }) => {
-  const [number, setNumber] = useState(32);
-
-  const handleInputChanged = (event) => {
-    const value = event.target.value;
-    setNumber(value);
-    if (updateEventCount) {
-      updateEventCount(value);
-    }
+const NumberOfEvents = ({ numberOfEvents, updateEventCount }) => {
+  const handleInputChange = (e) => {
+    const value = Number(e.target.value);
+    updateEventCount(value); // Correct function name to update the parent component state
   };
 
   return (
-    <div id="number-of-events" data-testid="number-of-events">
-      <label htmlFor="number-of-events-input">Number of Events: </label>
+    <div>
+      <label htmlFor="numberOfEvents">Number of Events:</label>
       <input
         type="number"
-        id="number-of-events-input"
-        className="number-of-events-input"
-        value={number}
-        onChange={handleInputChanged}
+        id="numberOfEvents"
+        value={numberOfEvents}
+        onChange={handleInputChange}
       />
     </div>
   );
