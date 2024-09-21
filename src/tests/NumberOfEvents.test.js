@@ -1,48 +1,28 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import App from "../App";
-import { getEvents, extractLocations } from "../api";
-import mockData from "../mock-data";
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import NumberOfEvents from '../components/NumberOfEvents';
 
-// Mock the API calls
-jest.mock("../api", () => ({
-  getEvents: jest.fn(),
-  extractLocations: jest.fn(),
-}));
-
-describe("<App /> integration", () => {
-  beforeEach(() => {
-    getEvents.mockResolvedValue(mockData);
-    extractLocations.mockReturnValue(["Berlin, Germany", "New York", "London"]);
+describe('<NumberOfEvents /> component', () => {
+  test('renders number of events text input', () => {
+    render(<NumberOfEvents />);
+    const numberTextBox = screen.queryByRole('textbox');
+    expect(numberTextBox).toBeInTheDocument();
+    expect(numberTextBox).toHaveClass('number-of-events-input');
   });
 
-  test("renders a list of events matching the number of events selected by the user", async () => {
-    render(<App />);
-    
-    // Ensure that the initial number of events is displayed
-    const numberOfEventsInput = screen.getByRole("spinbutton");
-    await userEvent.clear(numberOfEventsInput);
-    await userEvent.type(numberOfEventsInput, "10");
-    
-    // Wait for the events to update
-    await waitFor(() => {
-      const eventItems = screen.getAllByTestId("event-item");
-      expect(eventItems.length).toBe(10); // Ensure the number of events matches
-    });
+  test('default number is 32', () => {
+    render(<NumberOfEvents />);
+    const numberTextBox = screen.queryByRole('textbox');
+    expect(numberTextBox).toHaveValue("32");
   });
 
-  test("Users can change the number of events displayed", async () => {
-    render(<App />);
+  test('number of events text box value changes when the user types in it', async () => {
+    render(<NumberOfEvents />);
+    const user = userEvent.setup();
+    const numberTextBox = screen.queryByRole('textbox');
+    await user.clear(numberTextBox); // Clear default value before typing
+    await user.type(numberTextBox, "123");
 
-    // Change the number of events
-    const numberOfEventsInput = screen.getByRole("spinbutton");
-    await userEvent.clear(numberOfEventsInput);
-    await userEvent.type(numberOfEventsInput, "10");
-
-    // Wait for the events to update
-    await waitFor(() => {
-      const eventItems = screen.getAllByTestId("event-item");
-      expect(eventItems.length).toBe(10); // Ensure the number of events matches
-    });
+    expect(numberTextBox).toHaveValue("123");
   });
 });

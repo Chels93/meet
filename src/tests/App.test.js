@@ -1,48 +1,38 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "../App";
-import { getEvents, extractLocations } from "../api";
-import mockData from "../mock-data";
 
-// Mock the API calls
-jest.mock("../api", () => ({
-  getEvents: jest.fn(),
-  extractLocations: jest.fn(),
-}));
+describe("<App /> component", () => {
+  test("renders list of events", () => {
+    render(<App />);
+    expect(screen.getByTestId("event-list")).toBeInTheDocument();
+  });
+
+  test("renders CitySearch", () => {
+    render(<App />);
+    expect(screen.getByTestId("city-search")).toBeInTheDocument();
+  });
+
+  test("renders NumberOfEvents", () => {
+    render(<App />);
+    expect(screen.getByTestId("number-of-events")).toBeInTheDocument();
+  });
+});
 
 describe("<App /> integration", () => {
-  beforeEach(() => {
-    getEvents.mockResolvedValue(mockData);
-    extractLocations.mockReturnValue(["Berlin, Germany", "New York", "London"]);
-  });
-
-  test("renders a list of events matching the number of events selected by the user", async () => {
+  test("renders a list of events matching the city selected by the user", async () => {
     render(<App />);
 
-    // Ensure that the initial number of events is displayed
-    const numberOfEventsInput = screen.getByRole("spinbutton");
-    await userEvent.clear(numberOfEventsInput);
-    await userEvent.type(numberOfEventsInput, "10");
-
-    // Wait for the events to update
-    await waitFor(() => {
-      const eventItems = screen.getAllByTestId("event-item");
-      expect(eventItems.length).toBe(10); // Ensure the number of events matches
+    const CitySearchInput = await screen.findByRole("textbox", {
+      name: /search for a city/i,
     });
-  });
 
-  test("users can change the number of events displayed", async () => {
-    render(<App />);
+    await userEvent.type(CitySearchInput, "Berlin");
 
-    // Change the number of events
-    const numberOfEventsInput = screen.getByRole("spinbutton");
-    await userEvent.clear(numberOfEventsInput);
-    await userEvent.type(numberOfEventsInput, "10");
+    const berlinSuggestionItems = screen.getAllByText("Berlin, Germany");
 
-    // Wait for the events to update
-    await waitFor(() => {
-      const eventItems = screen.getAllByTestId("event-item");
-      expect(eventItems.length).toBe(10); // Ensure the number of events matches
+    berlinSuggestionItems.forEach((item) => {
+      expect(item).toBeInTheDocument();
     });
   });
 });

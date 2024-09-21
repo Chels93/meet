@@ -12,11 +12,19 @@ const MESSAGES_TO_IGNORE = [
   "Warning: `ReactDOMTestUtils.act` is deprecated in favor of `React.act`"
 ];
 
-const originalError = console.error;
+// Save the original console.error
+const originalConsoleError = console.error;
 
+// Override console.error to filter out specific messages
 console.error = (...args) => {
-  const ignoreMessage = MESSAGES_TO_IGNORE.find(message => args.toString().includes(message));
-  if (!ignoreMessage) originalError(...args);
+  // Convert args to a string and check if it contains any of the messages to ignore
+  const message = args.join(' ');
+  const shouldIgnore = MESSAGES_TO_IGNORE.some(ignored => message.includes(ignored));
+
+  // Only call the original console.error if the message is not in the ignore list
+  if (!shouldIgnore) {
+    originalConsoleError(...args);
+  }
 };
 
 // For handling globalThis if needed

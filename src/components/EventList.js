@@ -1,14 +1,20 @@
-import React from "react";
-import Event from "./Event";
+import Event from './Event';
 
 const EventList = ({ events }) => {
   return (
-    <ul className="event-list" data-testid="event-list">
-      {events.map((event, index) => (
-        <li key={index} data-testid="event-item">
-          <Event event={event} />
-        </li>
-      ))}
+    <ul id="event-list" data-testid="event-list"> {/* Add data-testid for testing */}
+      {events && events.length > 0 ? (
+        events.map(event => (
+          <li key={event.id}>
+            {/* Ensure Event does not render another <li> */}
+            <div>
+              <Event event={event} />
+            </div>
+          </li>
+        ))
+      ) : (
+        <li>No events available</li> // Handle case when there are no events
+      )}
     </ul>
   );
 };

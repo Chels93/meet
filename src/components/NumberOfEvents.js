@@ -1,23 +1,28 @@
-// NumberOfEvents.js
-import React from "react";
+// src/components/NumberOfEvents.js
 
-const NumberOfEvents = ({ numberOfEvents, updateEventCount }) => {
-  const handleInputChange = (e) => {
-    const value = Number(e.target.value);
-    updateEventCount(value); // Correct function name to update the parent component state
-  };
+import { useState } from "react";
+
+const NumberOfEvents = () => {  // Removed the empty object pattern
+
+  const [number, setNumber] = useState(32);
+
+  const handleInputChanged = (event) => {
+    const value = event.target.value;
+    setNumber(value);
+  }
 
   return (
-    <div>
-      <label htmlFor="numberOfEvents">Number of Events:</label>
+    <div id="number-of-events">
+      <label htmlFor="number-of-events-input">Number of Events: </label>
       <input
-        type="number"
-        id="numberOfEvents"
-        value={numberOfEvents}
-        onChange={handleInputChange}
+        type="text"
+        id="number-of-events-input"
+        className="number-of-events-input"
+        value={number}
+        onChange={handleInputChanged}
       />
     </div>
   );
-};
+}
 
 export default NumberOfEvents;

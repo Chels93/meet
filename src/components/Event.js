@@ -1,26 +1,43 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 const Event = ({ event }) => {
-  const [showDetails, setShowDetails] = useState(false);
+  const [detailsVisible, setDetailsVisible] = useState(false);
 
-  const startTime = new Date(event.start.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  const endTime = new Date(event.end.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-  const handleButtonClick = () => {
-    setShowDetails(prev => !prev);
+  const toggleDetails = () => {
+    setDetailsVisible((prev) => !prev);
   };
 
   return (
-    <div className="event">
-      <h2>{event.title}</h2>
+    <div className="event" role="article">
+      <h2 id={`event-title-${event.id}`}>{event.title}</h2>
       <p>{event.location}</p>
-      <p>{startTime} - {endTime}</p>
-      <button onClick={handleButtonClick}>
-        {showDetails ? 'Hide Details' : 'Show Details'}
+      <p>{new Date(event.date).toLocaleString()}</p>
+      {detailsVisible && (
+        <p aria-live="polite" className="details" id={`event-details-${event.id}`}>
+          {event.details || 'No details available'}
+        </p>
+      )}
+      <button
+        aria-controls={`event-details-${event.id}`}
+        aria-expanded={detailsVisible}
+        onClick={toggleDetails}
+        className="details-btn"
+      >
+        {detailsVisible ? 'Hide Details' : 'Show Details'}
       </button>
-      {showDetails && <p>{event.description}</p>}
     </div>
   );
+};
+
+Event.propTypes = {
+  event: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string,
+    location: PropTypes.string.isRequired,
+    date: PropTypes.string,
+    details: PropTypes.string,
+  }).isRequired,
 };
 
 export default Event;

@@ -1,40 +1,34 @@
+// src/components/CitySearch.js
+
 import { useState, useEffect } from "react";
 
-const CitySearch = ({ allLocations = [], setCurrentCity }) => {
+const CitySearch = ({ allLocations, setCurrentCity }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
   useEffect(() => {
     setSuggestions(allLocations);
-  }, [allLocations]);
+  }, [allLocations]); // Corrected dependency array
 
   const handleInputChanged = (event) => {
     const value = event.target.value;
+    const filteredLocations = allLocations.filter((location) => {
+      return location.toUpperCase().includes(value.toUpperCase());
+    });
     setQuery(value);
-
-    if (value) {
-      const filteredLocations = allLocations.filter((location) =>
-        location.toUpperCase().includes(value.toUpperCase())
-      );
-      setSuggestions(filteredLocations);
-      setShowSuggestions(true);
-    } else {
-      // Show "See all cities" if the input is cleared
-      setSuggestions(allLocations);
-      setShowSuggestions(true);
-    }
+    setSuggestions(filteredLocations);
   };
 
   const handleItemClicked = (event) => {
-    const value = event.currentTarget.dataset.value; // Use data-value attribute
+    const value = event.target.textContent;
     setQuery(value);
     setShowSuggestions(false);
-    setCurrentCity(value === "See all cities" ? "See all cities" : value);
+    setCurrentCity(value);
   };
 
   return (
-    <div id="city-search" data-testid="city-search">
+    <div id="city-search">
       <input
         type="text"
         className="city"
@@ -42,34 +36,18 @@ const CitySearch = ({ allLocations = [], setCurrentCity }) => {
         value={query}
         onFocus={() => setShowSuggestions(true)}
         onChange={handleInputChanged}
-        data-testid="city-search-input"
+        aria-label="Search for a city" // Added aria-label for accessibility
       />
       {showSuggestions && (
         <ul className="suggestions">
-          {suggestions.length > 0 ? (
-            <>
-              {suggestions.map((suggestion) => (
-                <li
-                  onClick={handleItemClicked}
-                  key={suggestion}
-                  data-value={suggestion} // Add data-value attribute
-                  data-testid={`suggestion-${suggestion}`}
-                >
-                  {suggestion}
-                </li>
-              ))}
-              <li
-                onClick={handleItemClicked}
-                key="see-all-cities"
-                data-value="See all cities" // Add data-value attribute
-                data-testid="see-all-cities"
-              >
-                <b>See all cities</b>
-              </li>
-            </>
-          ) : (
-            <li data-testid="no-suggestions">No suggestions</li>
-          )}
+          {suggestions.map((suggestion) => (
+            <li onClick={handleItemClicked} key={suggestion}>
+              {suggestion}
+            </li>
+          ))}
+          <li key='See all cities' onClick={handleItemClicked}>
+            <b>See all cities</b>
+          </li>
         </ul>
       )}
     </div>
