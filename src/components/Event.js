@@ -19,6 +19,7 @@ const Event = ({ event }) => {
         </p>
       )}
       <button
+        data-testid={`expand-button-${event.id}`} // Set data-testid for testing
         aria-controls={`event-details-${event.id}`}
         aria-expanded={detailsVisible}
         onClick={toggleDetails}
@@ -32,9 +33,9 @@ const Event = ({ event }) => {
 
 Event.propTypes = {
   event: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired, // Ensure id is a string
     title: PropTypes.string,
-    location: PropTypes.string.isRequired,
+    location: PropTypes.string,
     date: PropTypes.string,
     details: PropTypes.string,
   }).isRequired,

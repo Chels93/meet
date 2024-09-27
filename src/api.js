@@ -6,8 +6,7 @@ import mockData from "./mock-data"; // Import the mockData
 // Function to extract unique locations from events
 export const extractLocations = (events) => {
   const extractedLocations = events.map((event) => event.location);
-  const locations = [...new Set(extractedLocations)];
-  return locations;
+  return [...new Set(extractedLocations)];
 };
 
 // Function to check if the access token is valid
@@ -26,18 +25,8 @@ const checkToken = async (accessToken) => {
 
 // Function to remove query parameters from URL
 const removeQuery = () => {
-  let newUrl;
-  if (window.history.pushState && window.location.pathname) {
-    newUrl =
-      window.location.protocol +
-      "//" +
-      window.location.host +
-      window.location.pathname;
-    window.history.pushState("", "", newUrl);
-  } else {
-    newUrl = window.location.protocol + "//" + window.location.host;
-    window.history.pushState("", "", newUrl);
-  }
+  let newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+  window.history.pushState("", "", newUrl);
 };
 
 // Function to get access token using authorization code
@@ -88,7 +77,7 @@ const getAccessToken = async () => {
     }
   }
 
-  return code && (await getToken(code));
+  return code ? await getToken(code) : null;
 };
 
 // Function to fetch events from the Google Calendar API
@@ -97,7 +86,13 @@ export const getEvents = async (numberOfEvents) => {
 
   if (window.location.href.startsWith("http://localhost")) {
     NProgress.done();
-    return mockData.slice(0, numberOfEvents); // Only return the requested number of events from mock data
+    return mockData; // Only return the requested number of events from mock data
+  }
+
+  if (!navigator.onLine) {
+    const events = localStorage.getItem("lastEvents");
+    NProgress.done();
+    return events ? JSON.parse(events) : [];
   }
 
   try {
@@ -108,8 +103,8 @@ export const getEvents = async (numberOfEvents) => {
     }
 
     removeQuery();
-    const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?maxResults=${numberOfEvents}&access_token=${token}`;
-    const response = await fetch(url);
+    const eventsUrl = `https://i8ud6jtxbc.execute-api.us-east-1.amazonaws.com/dev/api/get-events`;
+    const response = await fetch(eventsUrl);
     if (!response.ok) throw new Error("Failed to fetch events");
     const result = await response.json();
     NProgress.done();

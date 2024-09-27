@@ -1,22 +1,47 @@
-import Event from './Event';
+import React, { useState } from 'react';
 
-const EventList = ({ events }) => {
+const Event = ({ event }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleDetails = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
-    <ul id="event-list" data-testid="event-list"> {/* Add data-testid for testing */}
-      {events && events.length > 0 ? (
-        events.map(event => (
-          <li key={event.id}>
-            {/* Ensure Event does not render another <li> */}
-            <div>
-              <Event event={event} />
-            </div>
-          </li>
-        ))
-      ) : (
-        <li>No events available</li> // Handle case when there are no events
+    <div className="event" role="article">
+      <h2 id={`event-title-${event.id}`}>{event.title}</h2>
+      <p>{new Date(event.date).toLocaleDateString() || 'Invalid Date'}</p>
+      {isExpanded && (
+        <p
+          aria-live="polite"
+          className="details"
+          id={`event-details-${event.id}`}
+          data-testid={`event-details-${event.id}`}
+        >
+          {event.details}
+        </p>
       )}
-    </ul>
+      <button
+        aria-controls={`event-details-${event.id}`}
+        aria-expanded={isExpanded}
+        className="details-btn"
+        data-testid={`expand-button-${event.id}`}
+        onClick={toggleDetails}
+      >
+        {isExpanded ? 'Hide Details' : 'Show Details'}
+      </button>
+    </div>
   );
 };
+
+const EventList = ({ events }) => (
+  <ul data-testid="event-list" id="event-list">
+    {events.map((event) => (
+      <li key={event.id}>
+        <Event event={event} />
+      </li>
+    ))}
+  </ul>
+);
 
 export default EventList;

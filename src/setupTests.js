@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/extend-expect';
 import { configure } from '@testing-library/react';
 
 // Configure Testing Library with a custom timeout
-configure({ asyncUtilTimeout: 1000 });
+configure({ asyncUtilTimeout: 1000 }); // Adjust this timeout as necessary
 
 // List of warning messages you want to intentionally ignore
 const MESSAGES_TO_IGNORE = [
@@ -27,5 +27,5 @@ console.error = (...args) => {
   }
 };
 
-// For handling globalThis if needed
-window.globalThis = window;
+// Remove this line if not necessary; modern environments should support globalThis natively
+window.globalThis = window; // Optional: Only include if you encounter issues with globalThis
