@@ -7,8 +7,8 @@ const Event = ({ event }) => {
   return (
     <li className="event">
       <h2>{event?.summary}</h2>
-      <p>{event?.location}</p>
-      <p>{new Date(event?.created).toUTCString()}</p>
+      <p className="event-location">{event?.location}</p>
+      <p className="event-date">{new Date(event?.created).toUTCString()}</p>
       {showDetails && (
         <p data-testid={`event-details-${event.id}`} className="details">
           {event.description}

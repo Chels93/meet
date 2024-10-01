@@ -1,88 +1,231 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:500);
+/* Importing Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Playfair+Display:wght@400;700&display=swap");
+
+/* Root variables for easy color management throughout the stylesheet */
+:root {
+  --primary-color: #219ebc; /* Blue color for primary buttons and interactive elements */
+  --secondary-color: #8ecae6; /* Light blue for backgrounds and accents */
+  --tertiary-color: #ffb703; /* UT orange for border box shadow */
+  --background-color: #fbf9f3; /* Light background color for the main body */
+  --text-color: #023047; /* Dark color for text, providing good contrast */
+  --suggestion-hover-color: #219ebc; /* Color when hovering over suggestions */
+  --event-border-color: #219ebc; /* Border color for event containers */
+  --shadow-color: rgba(0, 0, 0, 0.1); /* Light shadow color for elements */
+  --details-btn-color: #219ebc; /* Background color for the details button */
+  --details-btn-border-color: #219ebc; /* Border color for details button */
+}
+
+/* Basic styles for the body element */
+body {
+  font-family: "Roboto", sans-serif; /* Setting Roboto as the primary font */
+  background-color: var(
+    --background-color
+  ); /* Background color from root variable */
+  color: var(--text-color); /* Text color from root variable */
+  line-height: 1.6; /* Spacing between lines for readability */
+}
+
+/* Styles for the main application container */
 .App {
-  text-align: center;
-  padding: 2% 5%;
+  text-align: center; /* Center the text inside the app */
+  padding: 2% 5%; /* Add padding for better spacing */
+  background-color: white; /* White background for the app container */
+  box-shadow: 0px 4px 12px var(--shadow-color); /* Subtle shadow for depth */
+  transition: box-shadow 0.3s ease; /* Smooth transition effect for hover */
 }
 
+/* Hover effect for the App container to enhance interactivity */
+.App:hover {
+  box-shadow: 0px 8px 24px var(--shadow-color); /* Increase shadow on hover */
+}
+
+/* Ensuring all child elements of .App use box-sizing border-box */
 .App * {
-  box-sizing: border-box;
+  box-sizing: border-box; /* Include padding and border in the element's total width/height */
 }
 
+/* Styles for unordered lists */
 ul {
-  padding: 0;
-  list-style: none;
+  padding: 0; /* Remove default padding */
+  list-style: none; /* Remove default list styling */
+  font-weight: 400;
 }
 
+/* Styles for paragraphs */
 p {
-  margin: 5px 0;
+  margin: 10px 0; /* Vertical margin for paragraphs */
+  font-family: "Playfair Display", serif; /* Decorative font for paragraph text */
+  font-size: 16px; /* Font size for paragraphs */
+  color: var(--text-color); /* Text color from root variable */
 }
 
+/* Styles for text and number input fields */
 input[type="text"],
 input[type="number"] {
-  padding: 8px 6px 8px 10px;
-  border-radius: 4px;
-  outline: none;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  line-height: 20px;
-  align-self: center;
-  height: 38px;
-  margin-bottom: 20px;
+  padding: 10px; /* Padding for comfort */
+  border-radius: 4px; /* Slightly rounded corners */
+  outline: none; /* Remove default outline */
+  border: 2px solid #219ebc; /* Border color for inputs */
+  background-color: white; /* Background color for input fields */
+  font-size: 16px; /* Font size for input text */
+  line-height: 24px; /* Line height for better text appearance */
+  margin-bottom: 20px; /* Margin below inputs */
+  transition: border 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for focus effects */
 }
 
+/* Styles for focused input fields */
+input[type="text"]:focus,
+input[type="number"]:focus {
+  border-color: var(--primary-color); /* Change border color on focus */
+  box-shadow: 0 0 6px var(--primary-color); /* Add shadow effect on focus */
+}
+
+/* Specific width for the city input field */
 .city {
-  width: 250px;
+  width: 250px; /* Fixed width for the city input */
 }
 
+/* Container styles for city search */
 #city-search {
-  display: flex;
-  flex-direction: column;
-  margin: auto;
-  position: relative;
+  display: flex; /* Use flexbox layout */
+  flex-direction: column; /* Stack children vertically */
+  margin: auto; /* Center the container */
+  position: relative; /* Positioning context for absolute children */
 }
 
+/* Styles for the suggestions dropdown */
 .suggestions {
-  width: 250px;
-  position: absolute;
-  top: 45px;
-  z-index: 2;
-  align-self: center;
-  margin: 0;
-  font-size: 14px;
-  box-shadow: 10px 10px 16px -12px rgba(0, 0, 0, 0.75);
+  width: 250px; /* Fixed width for suggestions dropdown */
+  position: absolute; /* Position relative to #city-search */
+  top: 45px; /* Position below the input field */
+  z-index: 2; /* Ensure it's above other elements */
+  margin: 0; /* Remove margin */
+  font-size: 16px; /* Font size for suggestions */
+  box-shadow: 0px 8px 16px var(--shadow-color); /* Shadow for dropdown */
+  background-color: white; /* Background color for dropdown */
+  border: 2px solid #219ebc; /* Border color for dropdown */
+  border-radius: 10px;
 }
 
+/* Styles for individual suggestion items */
 .suggestions > li {
-  text-align: left;
-  padding: 8px 6px 8px 10px;
-  background-color: #eee;
-  cursor: default;
+  text-align: left; /* Align text to the left */
+  padding: 10px; /* Padding for suggestion items */
+  background-color: white; /* Background color for suggestion items */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
 }
 
-.suggestions > li:last-child {
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-}
-
+/* Hover effect for suggestion items */
 .suggestions > li:hover {
-  background-color: #bcdcdb;
+    background-color: var(--suggestion-hover-color); /* Change background on hover */
+    color: #fbf9f3; /* Change text color on hover */
+  }
+  
+
+/* Styles for the last suggestion item */
+.suggestions > li:last-child {
+  border-bottom-left-radius: 4px; /* Rounded bottom corners */
+  border-bottom-right-radius: 4px; /* Rounded bottom corners */
 }
 
+/* Styles for individual event containers */
 .event {
-  padding: 10px 10px 35px;
-  margin-bottom: 10px;
-  text-align: left;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  position: relative;
+  padding: 15px; /* Padding inside event container */
+  margin-bottom: 10px; /* Margin below each event */
+  text-align: left; /* Align text to the left */
+  border: 2px solid #ffb703; /* Border color for event containers */
+  border-radius: 8px; /* Rounded corners for event containers */
+  background-color: transparent; /* Transparent background */
+  box-shadow: 0px 2px 8px var(--shadow-color); /* Shadow for event containers */
+  transition: transform 0.3s ease; /* Smooth transform on hover */
+  position: relative; /* Positioning context for child elements */
 }
 
-.details-btn {
-  position: absolute;
-  right: 5px;
-  bottom: 5px;
-  padding: 5px 8px;
-  border-radius: 4px;
-  outline: none;
-  cursor: pointer;
+/* Hover effect for event containers */
+.event:hover {
+  transform: translateY(-2px); /* Lift effect on hover */
 }
+
+/* Styles for the event title */
+.event-title {
+  font-size: 24px; /* Font size for the title */
+  color: #023047; /* Title text color */
+  text-shadow: 2px 2px 2px #8ecae6; /* Light blue shadow for the title */
+}
+
+/* Styles for the details button */
+.details-btn {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    background-color: #023047;
+    color: white; /* Default text color for button */
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Hover effect for the details button */
+  .details-btn:hover {
+    background-color: var(--details-btn-color); /* Use the color defined in the variable */
+    color: #fbf9f3; /* Change text color on hover */
+  }
+  
+  /* Change the text color back to white when not hovered */
+  .details-btn:not(:hover) {
+    color: white; /* Default text color */
+  }
+  
+/* Styles for the hide details button */
+.hide-details-btn {
+  margin-top: 10px; /* Space above the button */
+  /* Other styles for the button */
+}
+
+/* Styles for Number of Events container */
+.number-of-events {
+  border: 2px solid #219ebc; /* Border color for Number of Events (changed) */
+  border-radius: 10px; /* Rounded corners for the container */
+  padding: 10px; /* Padding for the container */
+}
+
+/* Styles for event location */
+.event-location {
+  font-size: 18px; /* Adjust font size as needed */
+  color: var(--primary-color); /* Use a color from your root variables */
+  margin: 5px 0; /* Margin for spacing */
+  font-weight: bolder; /* Medium boldness */
+  text-transform: uppercase; /* Optional: make text uppercase for emphasis */
+}
+
+/* Styles for event date/time */
+.event-date {
+  font-size: 16px; /* Adjust font size as needed */
+  color: var(--text-color); /* Use your text color variable */
+  margin: 5px 0; /* Margin for spacing */
+  font-weight: 400; /* Bold for stronger emphasis */
+}
+
+/* Styles for Show Other Cities button */
+.show-other-cities {
+    border: 2px solid #219ebc; /* Border color for Show Other Cities */
+    border-radius: 10px; /* Rounded corners for the button */
+    padding: 10px; /* Padding for the button */
+    background-color: white; /* Background color for clarity */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: border-color 0.3s ease; /* Smooth transition for border color */
+  }
+  
+  /* Hover effect for the Show Other Cities */
+  .show-other-cities:hover {
+    border-color: #219ebc; /* Ensure the border color remains blue on hover */
+  }
+  
+  /* Prevent border color change on active click */
+  .show-other-cities:active,
+  .show-other-cities:focus {
+    border-color: #219ebc; /* Keep the border color blue when clicked or focused */
+  }
+  
