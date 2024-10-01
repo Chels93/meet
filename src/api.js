@@ -1,12 +1,11 @@
 // src/api.js
-
-import NProgress from "nprogress";
 import mockData from "./mock-data"; // Import the mockData
 
 // Function to extract unique locations from events
 export const extractLocations = (events) => {
   const extractedLocations = events.map((event) => event.location);
-  return [...new Set(extractedLocations)];
+  const locations = [...new Set(extractedLocations)];
+  return locations;
 };
 
 // Function to check if the access token is valid
@@ -23,95 +22,74 @@ const checkToken = async (accessToken) => {
   }
 };
 
-// Function to remove query parameters from URL
-const removeQuery = () => {
-  let newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-  window.history.pushState("", "", newUrl);
-};
-
 // Function to get access token using authorization code
 const getToken = async (code) => {
   const encodeCode = encodeURIComponent(code);
-  try {
-    const response = await fetch(
-      `https://i8ud6jtxbc.execute-api.us-east-1.amazonaws.com/dev/api/token/${encodeCode}`
-    );
-    if (!response.ok) throw new Error("Failed to fetch access token");
-    const { access_token } = await response.json();
-    if (access_token) {
-      localStorage.setItem("access_token", access_token);
-    }
-    return access_token;
-  } catch (error) {
-    console.error("Error fetching token:", error);
-    return null;
+  const response = await fetch(
+    `https://i8ud6jtxbc.execute-api.us-east-1.amazonaws.com/dev/api/token/${encodeCode}`
+  );
+  const { access_token } = await response.json();
+  if (access_token) {
+    localStorage.setItem("access_token", access_token);
   }
+  return access_token;
 };
 
 // Function to get access token from local storage or via authentication
-const getAccessToken = async () => {
+export const getAccessToken = async () => {
   const accessToken = localStorage.getItem("access_token");
-  if (accessToken) {
-    const tokenCheck = await checkToken(accessToken);
-    if (tokenCheck && !tokenCheck.error) {
-      return accessToken;
-    }
-  }
+  const tokenCheck = accessToken && (await checkToken(accessToken));
 
-  localStorage.removeItem("access_token");
-  const searchParams = new URLSearchParams(window.location.search);
-  const code = searchParams.get("code");
-
-  if (!code) {
-    try {
+  if (!accessToken || tokenCheck.error) {
+    await localStorage.removeItem("access_token");
+    const searchParams = new URLSearchParams(window.location.search);
+    const code = await searchParams.get("code");
+    if (!code) {
       const response = await fetch(
         "https://i8ud6jtxbc.execute-api.us-east-1.amazonaws.com/dev/api/get-auth-url"
       );
-      if (!response.ok) throw new Error("Failed to fetch auth URL");
-      const { authUrl } = await response.json();
-      window.location.href = authUrl;
-      return null; // No further code execution after redirect
-    } catch (error) {
-      console.error("Error fetching auth URL:", error);
-      return null;
+      const result = await response.json();
+      const { authUrl } = result;
+      return (window.location.href = authUrl);
     }
+    return code && getToken(code);
   }
-
-  return code ? await getToken(code) : null;
+  return accessToken;
 };
 
 // Function to fetch events from the Google Calendar API
-export const getEvents = async (numberOfEvents) => {
-  NProgress.start();
-
+export const getEvents = async () => {
   if (window.location.href.startsWith("http://localhost")) {
-    NProgress.done();
-    return mockData; // Only return the requested number of events from mock data
+    return mockData;
   }
 
-  if (!navigator.onLine) {
-    const events = localStorage.getItem("lastEvents");
-    NProgress.done();
-    return events ? JSON.parse(events) : [];
-  }
-
-  try {
-    const token = await getAccessToken();
-    if (!token) {
-      NProgress.done();
-      return []; // No token means we cannot fetch events
-    }
-
+  const token = await getAccessToken();
+  
+  if (token) {
     removeQuery();
-    const eventsUrl = `https://i8ud6jtxbc.execute-api.us-east-1.amazonaws.com/dev/api/get-events`;
-    const response = await fetch(eventsUrl);
-    if (!response.ok) throw new Error("Failed to fetch events");
+    const url = `https://i8ud6jtxbc.execute-api.us-east-1.amazonaws.com/dev/api/get-events/${token}`;
+    const response = await fetch(url);
     const result = await response.json();
-    NProgress.done();
-    return result.items || [];
-  } catch (error) {
-    NProgress.done();
-    console.error("Error fetching events:", error);
-    return [];
+    if (result) {
+      return result.events;
+    } else {
+      return null;
+    }
+  }
+};
+
+// Function to remove query parameters from the URL
+const removeQuery = () => {
+  let newurl;
+  if (window.history.pushState && window.location.pathname) {
+    newurl =
+      window.location.protocol +
+      "//" +
+      window.location.host +
+      window.location.pathname;
+    window.history.pushState("", "", newurl);
+  } else {
+    newurl = window.location.protocol + "//" + window.location.host;
+    window.history.pushState("", "", newurl);
   }
 };

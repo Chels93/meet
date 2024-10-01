@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const NumberOfEvents = () => {  // Removed the empty object pattern
+const NumberOfEvents = ({ }) => {
 
   const [number, setNumber] = useState(32);
 

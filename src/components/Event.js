@@ -1,44 +1,28 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+// src/components/Event.js
+import { useState } from "react";
 
 const Event = ({ event }) => {
-  const [detailsVisible, setDetailsVisible] = useState(false);
-
-  const toggleDetails = () => {
-    setDetailsVisible((prev) => !prev);
-  };
+  const [showDetails, setShowDetails] = useState(false);
 
   return (
-    <div className="event" role="article">
-      <h2 id={`event-title-${event.id}`}>{event.title}</h2>
-      <p>{event.location}</p>
-      <p>{new Date(event.date).toLocaleString()}</p>
-      {detailsVisible && (
-        <p aria-live="polite" className="details" id={`event-details-${event.id}`}>
-          {event.details || 'No details available'}
+    <li className="event">
+      <h2>{event?.summary}</h2>
+      <p>{event?.location}</p>
+      <p>{new Date(event?.created).toUTCString()}</p>
+      {showDetails && (
+        <p data-testid={`event-details-${event.id}`} className="details">
+          {event.description}
         </p>
       )}
       <button
-        data-testid={`expand-button-${event.id}`} // Set data-testid for testing
-        aria-controls={`event-details-${event.id}`}
-        aria-expanded={detailsVisible}
-        onClick={toggleDetails}
+        data-testid={`expand-button-${event.id}`}
         className="details-btn"
+        onClick={() => setShowDetails(!showDetails)}
       >
-        {detailsVisible ? 'Hide Details' : 'Show Details'}
+        {showDetails ? "Hide details" : "Show details"}
       </button>
-    </div>
+    </li>
   );
-};
-
-Event.propTypes = {
-  event: PropTypes.shape({
-    id: PropTypes.string.isRequired, // Ensure id is a string
-    title: PropTypes.string,
-    location: PropTypes.string,
-    date: PropTypes.string,
-    details: PropTypes.string,
-  }).isRequired,
 };
 
 export default Event;
