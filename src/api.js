@@ -96,35 +96,36 @@ export const getAccessToken = async () => {
 
 // Function to fetch events from the Google Calendar API
 export const getEvents = async () => {
-  if (window.location.href.startsWith("http://localhost")) {
-    return mockData; // Return mock data in local development
-  }
-
-  const token = await getAccessToken();
-  console.log("Access Token Before Fetching Events:", token); // Log the token before fetching events
-
-  if (token) {
-    removeQuery(); // Clean the URL by removing query parameters
-    const url = "https://i8ud6jtxbc.execute-api.us-east-1.amazonaws.com/prod/api/get-events";
-    try {
-      const response = await fetch(url);
-      const result = await response.json();
-
-      if (result && result.events) {
-        console.log("Fetched Events:", result.events); // Log the fetched events
-        return result.events; // Return the fetched events
-      } else {
-        console.error("No events found in the response."); // Log if no events are found
-        return []; // Return an empty array instead of null
-      }
-    } catch (error) {
-      console.error("Error fetching events:", error);
-      return []; // Return an empty array in case of an error
+    if (window.location.href.startsWith("http://localhost")) {
+      console.log("Returning mock data:", mockData); // Log mock data in development
+      return mockData;
     }
-  }
-
-  return []; // Return an empty array if no token is found
-};
+  
+    const token = await getAccessToken();
+    console.log("Access Token Before Fetching Events:", token); // Log the token before fetching events
+  
+    if (token) {
+      removeQuery();
+      const url = "https://i8ud6jtxbc.execute-api.us-east-1.amazonaws.com/prod/api/get-events";
+      try {
+        const response = await fetch(url);
+        const result = await response.json();
+        console.log("API response:", result); // Log the API response
+        if (result && result.events) {
+          console.log("Fetched Events:", result.events); // Log fetched events
+          return result.events;
+        } else {
+          console.error("No events found in the response.");
+          return [];
+        }
+      } catch (error) {
+        console.error("Error fetching events:", error);
+        return [];
+      }
+    }
+  
+    return [];
+  };
 
 // Function to remove query parameters from the URL
 const removeQuery = () => {

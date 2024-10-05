@@ -33,8 +33,10 @@ const App = () => {
   }, [currentCity, currentNOE]);
 
   useEffect(() => {
+    console.log("Fetching data with city:", currentCity, "and NOE:", currentNOE); // Log city and number of events
     fetchData();
-  }, [fetchData]);
+  }, [fetchData, currentCity, currentNOE]);
+  
 
   return (
     <div className="App">
