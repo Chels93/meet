@@ -8,39 +8,41 @@ export const extractLocations = (events) => {
   return locations;
 };
 
+// Function to check the validity of an access token
 const checkToken = async (accessToken) => {
   console.log("Checking Token:", accessToken); // Log the token being checked
   try {
     const response = await fetch(
       `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${accessToken}`
     );
+
     if (!response.ok) {
       const errorResponse = await response.json();
       console.error("Token validation error response:", errorResponse); // Log error response
       throw new Error(
-        `Failed to validate token: ${
-          errorResponse.error || response.statusText
-        }`
+        `Failed to validate token: ${errorResponse.error || response.statusText}`
       );
     }
-    return await response.json();
+
+    return await response.json(); // Return token info
   } catch (error) {
     console.error("Error checking token:", error);
     return { error: true }; // Return an error object for consistent handling
   }
 };
 
+// Function to retrieve the access token using the authorization code
 const getToken = async (code) => {
-  const encodeCode = encodeURIComponent(code);
+  const encodedCode = encodeURIComponent(code);
   try {
     const response = await fetch(
       "https://i8ud6jtxbc.execute-api.us-east-1.amazonaws.com/prod/api/token",
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ code: encodeCode })
+        body: JSON.stringify({ code: encodedCode }),
       }
     );
 
@@ -54,9 +56,9 @@ const getToken = async (code) => {
     console.log("Access Token Retrieved:", access_token);
 
     if (access_token) {
-      localStorage.setItem("access_token", access_token);
+      localStorage.setItem("access_token", access_token); // Store the access token
     }
-    return access_token;
+    return access_token; // Return the access token
   } catch (error) {
     console.error("Error getting token:", error);
     return null; // Return null if there's an error
@@ -71,7 +73,7 @@ export const getAccessToken = async () => {
   if (!accessToken || tokenCheck?.error) {
     await localStorage.removeItem("access_token");
     const searchParams = new URLSearchParams(window.location.search);
-    const code = await searchParams.get("code");
+    const code = searchParams.get("code"); // Get authorization code from URL
 
     if (!code) {
       console.log("No authorization code found, fetching auth URL..."); // Log this case
@@ -84,31 +86,33 @@ export const getAccessToken = async () => {
       return null; // Explicitly return null after redirection
     }
 
-    const token = await (code && getToken(code));
+    const token = await getToken(code); // Retrieve token using the authorization code
     console.log("Token after retrieval:", token); // Log the token after retrieval
     return token;
   }
-  return accessToken;
+
+  return accessToken; // Return the existing access token
 };
 
 // Function to fetch events from the Google Calendar API
 export const getEvents = async () => {
   if (window.location.href.startsWith("http://localhost")) {
-    return mockData;
+    return mockData; // Return mock data in local development
   }
 
   const token = await getAccessToken();
   console.log("Access Token Before Fetching Events:", token); // Log the token before fetching events
 
   if (token) {
-    removeQuery();
+    removeQuery(); // Clean the URL by removing query parameters
     const url = "https://i8ud6jtxbc.execute-api.us-east-1.amazonaws.com/prod/api/get-events";
     try {
       const response = await fetch(url);
       const result = await response.json();
+
       if (result && result.events) {
         console.log("Fetched Events:", result.events); // Log the fetched events
-        return result.events;
+        return result.events; // Return the fetched events
       } else {
         console.error("No events found in the response."); // Log if no events are found
         return []; // Return an empty array instead of null
@@ -124,16 +128,16 @@ export const getEvents = async () => {
 
 // Function to remove query parameters from the URL
 const removeQuery = () => {
-  let newurl;
+  let newUrl;
   if (window.history.pushState && window.location.pathname) {
-    newurl =
+    newUrl =
       window.location.protocol +
       "//" +
       window.location.host +
       window.location.pathname;
-    window.history.pushState("", "", newurl);
+    window.history.pushState("", "", newUrl);
   } else {
-    newurl = window.location.protocol + "//" + window.location.host;
-    window.history.pushState("", "", newurl);
+    newUrl = window.location.protocol + "//" + window.location.host;
+    window.history.pushState("", "", newUrl);
   }
 };
