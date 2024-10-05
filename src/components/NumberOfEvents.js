@@ -1,15 +1,12 @@
-// src/components/NumberOfEvents.js
-
 import { useState } from "react";
 
-const NumberOfEvents = ({ }) => {
-
+const NumberOfEvents = () => {
   const [number, setNumber] = useState(32);
 
   const handleInputChanged = (event) => {
     const value = event.target.value;
     setNumber(value);
-  }
+  };
 
   return (
     <div id="number-of-events">
@@ -23,6 +20,6 @@ const NumberOfEvents = ({ }) => {
       />
     </div>
   );
-}
+};
 
 export default NumberOfEvents;
