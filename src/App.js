@@ -15,28 +15,24 @@ const App = () => {
   // Use useCallback to memoize fetchData to avoid unnecessary recreation
   const fetchData = useCallback(async () => {
     const allEvents = await getEvents();
-    const filteredEvents = currentCity === "See all cities"
-      ? allEvents
-      : allEvents.filter(event => event.location === currentCity);
-
+    const filteredEvents = currentCity === "See all cities" ?
+      allEvents :
+      allEvents.filter(event => event.location === currentCity);
+    
     // Apply the currentNOE to limit the number of events displayed
-    setEvents(filteredEvents.slice(0, currentNOE));
+    setEvents(filteredEvents.slice(0, currentNOE)); 
     setAllLocations(extractLocations(allEvents));
   }, [currentCity, currentNOE]);
 
-  // Run fetchData when currentCity or currentNOE changes
   useEffect(() => {
-    fetchData(); 
-  }, [fetchData]); 
+    fetchData();
+  }, [fetchData]);  
 
   return (
     <div className="App">
-   
       <CitySearch allLocations={allLocations} setCurrentCity={setCurrentCity} />
-      
       <NumberOfEvents currentNOE={currentNOE} setCurrentNOE={setCurrentNOE} />
-\
-      <EventList events={events} />
+      <EventList allLocations={allLocations} events={events} />
     </div>
   );
 }

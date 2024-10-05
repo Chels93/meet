@@ -8,31 +8,63 @@ export const extractLocations = (events) => {
   return locations;
 };
 
-// Function to check if the access token is valid
 const checkToken = async (accessToken) => {
+  console.log("Checking Token:", accessToken); // Log the token being checked
   try {
     const response = await fetch(
       `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${accessToken}`
     );
-    if (!response.ok) throw new Error("Failed to validate token");
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error("Token validation error response:", errorResponse); // Log error response
+      throw new Error(
+        `Failed to validate token: ${
+          errorResponse.error || response.statusText
+        }`
+      );
+    }
     return await response.json();
   } catch (error) {
     console.error("Error checking token:", error);
-    return null;
+    return { error: true }; // Return an error object for consistent handling
   }
 };
 
-// Function to get access token using authorization code
 const getToken = async (code) => {
   const encodeCode = encodeURIComponent(code);
-  const response = await fetch(
-    `https://i8ud6jtxbc.execute-api.us-east-1.amazonaws.com/dev/api/token/${encodeCode}`
-  );
-  const { access_token } = await response.json();
-  if (access_token) {
-    localStorage.setItem("access_token", access_token);
+  try {
+    // Use the encoded code in the request body as a URL-encoded form
+    const response = await fetch(
+      "https://i8ud6jtxbc.execute-api.us-east-1.amazonaws.com/dev/api/token", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          code: encodeCode, // Pass the encoded code in the body
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorResponse = await response.json(); // Get the error response
+      console.error("Error response from token endpoint:", errorResponse); // Log the error response
+      throw new Error(
+        `Failed to fetch token: ${errorResponse.error || response.statusText}`
+      );
+    }
+
+    const { access_token } = await response.json();
+    console.log("Access Token Retrieved:", access_token); // Log the retrieved token
+
+    if (access_token) {
+      localStorage.setItem("access_token", access_token);
+    }
+    return access_token;
+  } catch (error) {
+    console.error("Error getting token:", error);
+    return null; // Return null if there's an error
   }
-  return access_token;
 };
 
 // Function to get access token from local storage or via authentication
@@ -40,19 +72,25 @@ export const getAccessToken = async () => {
   const accessToken = localStorage.getItem("access_token");
   const tokenCheck = accessToken && (await checkToken(accessToken));
 
-  if (!accessToken || tokenCheck.error) {
+  if (!accessToken || tokenCheck?.error) {
     await localStorage.removeItem("access_token");
     const searchParams = new URLSearchParams(window.location.search);
     const code = await searchParams.get("code");
+
     if (!code) {
+      console.log("No authorization code found, fetching auth URL..."); // Log this case
       const response = await fetch(
         "https://i8ud6jtxbc.execute-api.us-east-1.amazonaws.com/dev/api/get-auth-url"
       );
       const result = await response.json();
       const { authUrl } = result;
-      return (window.location.href = authUrl);
+      window.location.href = authUrl; // Redirect to auth URL
+      return null; // Explicitly return null after redirection
     }
-    return code && getToken(code);
+
+    const token = await (code && getToken(code));
+    console.log("Token after retrieval:", token); // Log the token after retrieval
+    return token;
   }
   return accessToken;
 };
@@ -64,16 +102,24 @@ export const getEvents = async () => {
   }
 
   const token = await getAccessToken();
-  
+  console.log("Access Token Before Fetching Events:", token); // Log the token before fetching events
+
   if (token) {
     removeQuery();
-    const url = `https://i8ud6jtxbc.execute-api.us-east-1.amazonaws.com/dev/api/get-events/${token}`;
-    const response = await fetch(url);
-    const result = await response.json();
-    if (result) {
-      return result.events;
-    } else {
-      return null;
+    const url = "https://i8ud6jtxbc.execute-api.us-east-1.amazonaws.com/dev/api/get-events";
+    try {
+      const response = await fetch(url);
+      const result = await response.json();
+      if (result) {
+        console.log("Fetched Events:", result.events); // Log the fetched events
+        return result.events;
+      } else {
+        console.error("No events found in the response."); // Log if no events are found
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching events:", error);
+      return null; // Return null in case of an error
     }
   }
 };
