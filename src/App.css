@@ -228,4 +228,12 @@ input[type="number"]:focus {
   .show-other-cities:focus {
     border-color: #219ebc; /* Keep the border color blue when clicked or focused */
   }
+
+  .alerts-container {
+    position: fixed;
+    top: 0px;
+    left: 20px;
+    width: 250px;
+    z-index: 1000;
+  }
   

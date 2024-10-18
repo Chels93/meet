@@ -2,7 +2,8 @@ import CitySearch from './components/CitySearch';
 import EventList from './components/EventList';
 import NumberOfEvents from './components/NumberOfEvents';
 import { useEffect, useState, useCallback } from 'react';
-import { extractLocations, getCalendarEvents } from './api';
+import { extractLocations, getEvents } from './api';
+import { InfoAlert } from './components/Alert';
 import './App.css';
 
 const App = () => {
@@ -12,13 +13,14 @@ const App = () => {
   const [currentCity, setCurrentCity] = useState("See all cities");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [infoAlert, setInfoAlert] = useState("");
 
   // Memoized function to fetch and filter events
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const allEvents = await getCalendarEvents(); // Fetch all events
+      const allEvents = await getEvents(); // Fetch all events
       console.log("Fetched events:", allEvents); // Log fetched events
       const filteredEvents = currentCity === "See all cities" ?
         allEvents :
@@ -40,11 +42,14 @@ const App = () => {
 
   return (
     <div className="App">
-      <CitySearch allLocations={allLocations} setCurrentCity={setCurrentCity} />
-      <NumberOfEvents currentNOE={currentNOE} setCurrentNOE={setCurrentNOE} />
-      {loading && <p>Loading events...</p>} {/* Display loading message */}
-      {error && <p className="error">{error}</p>} {/* Display error message */}
-      <EventList events={events} /> {/* Render the list of events */}
+    <div className="alerts-container">
+        {infoAlert.length ? <InfoAlert text={infoAlert}/> : null}
+      </div>
+      <CitySearch allLocations={allLocations} setCurrentCity={setCurrentCity} setInfoAlert={setInfoAlert}/>
+      <NumberOfEvents setCurrentNOE={setCurrentNOE} />
+      {loading && <p>Loading events...</p>} 
+      {error && <p className="error">{error}</p>}
+      <EventList events={events} /> 
     </div>
   );
 }
