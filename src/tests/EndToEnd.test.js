@@ -51,9 +51,9 @@ describe("End-to-End Testing for Event App", () => {
     test("User can change the number of events displayed", async () => {
       const inputSelector = "#number-of-events-input";
 
-      // Wait for the input field to appear
+      // Wait for the input field to appear and ensure it is visible
       try {
-        await page.waitForSelector(inputSelector, { timeout: 30000 });
+        await page.waitForSelector(inputSelector, { visible: true, timeout: 30000 });
       } catch (error) {
         console.error(
           "Input field not found. Current page HTML:",
@@ -63,7 +63,10 @@ describe("End-to-End Testing for Event App", () => {
       }
 
       // Continue with the test if the input field is found
+      console.log("Input field found, about to click.");
       await page.click(inputSelector, { clickCount: 3 });
+
+      console.log("Typing '10' into the input field.");
       await page.type(inputSelector, "10", { delay: 100 });
 
       await page.evaluate((selector) => {
@@ -73,7 +76,7 @@ describe("End-to-End Testing for Event App", () => {
         }
       }, inputSelector);
 
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(1000); // Wait for the events to be updated
 
       const eventItemsCount = await page.$$eval(
         ".event",
