@@ -1,21 +1,22 @@
-// src/components/EventList.js
-import React from 'react';
-import Event from './Event'; 
+import Event from './Event';
 
-const EventList = ({ events }) => {
+const EventList = ({ events = [], citySearch }) => {
+  // Filter events based on the city search input
+  const filteredEvents = events.filter(event => {
+    // Return all events if no city search input is provided, otherwise filter by location
+    return !citySearch || event.location.includes(citySearch);
+  });
+
   return (
-    <div>
-      <h2>Upcoming Events</h2>
-      <ul id="event-list">
-        {events && events.length > 0 ? (
-          events.map(event => (
-            <Event key={event.id} event={event} />
-          ))
-        ) : (
-          <p>No events available</p>
-        )}
-      </ul>
-    </div>
+    <ul id="event-list" role="list">
+      {filteredEvents.length > 0 ? (
+        filteredEvents.map(event => (
+          <Event key={event.id} event={event} />
+        ))
+      ) : (
+        <li>No events found.</li> // Optional: Display a message if no events match the filter
+      )}
+    </ul>
   );
 };
 

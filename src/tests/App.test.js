@@ -1,49 +1,65 @@
 // src/__tests__/App.test.js
 
-import { render, screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { getCalendarEvents } from '../api';
-import App from '../App';
+import { render, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { getEvents } from "../api";
+import App from "../App";
 
-describe('<App /> component', () => {
-  test('renders list of events', () => {
-    render(<App />);
-    expect(screen.getByTestId('event-list')).toBeInTheDocument();
+describe("<App /> component", () => {
+  let AppDOM;
+  beforeEach(() => {
+    AppDOM = render(<App />).container.firstChild;
+  });
+  test("renders list of events", () => {
+    expect(AppDOM.querySelector("#event-list")).toBeInTheDocument();
   });
 
-  test('render CitySearch', () => {
-    render(<App />);
-    expect(screen.getByTestId('city-search')).toBeInTheDocument();
+  test("render CitySearch", () => {
+    expect(AppDOM.querySelector("#city-search")).toBeInTheDocument();
   });
 
-  test('render NumberOfEvents', () => {
-    render(<App />);
-    expect(screen.getByTestId('number-of-events')).toBeInTheDocument();
-  });
+  test("render NumberOfEvents", () => {
+    expect(AppDOM.querySelector("#number-of-events-input")).toBeInTheDocument(); // Updated ID here
+  });  
 });
 
-describe('<App /> integration', () => {
-  test('renders a list of events matching the city selected by the user', async () => {
+describe("<App /> integration", () => {
+  test("renders a list of events matching the city selected by the user", async () => {
     const user = userEvent.setup();
-    render(<App />);
+    const AppComponent = render(<App />);
+    const AppDOM = AppComponent.container.firstChild;
 
-    const CitySearchDOM = screen.getByTestId('city-search');
-    const CitySearchInput = within(CitySearchDOM).getByRole('textbox');
+    const CitySearchDOM = AppDOM.querySelector("#city-search");
+    const CitySearchInput = within(CitySearchDOM).queryByRole("textbox");
 
     await user.type(CitySearchInput, "Berlin");
-    const berlinSuggestionItem = within(CitySearchDOM).getByText('Berlin, Germany');
+    const berlinSuggestionItem =
+      within(CitySearchDOM).queryByText("Berlin, Germany");
     await user.click(berlinSuggestionItem);
 
-    const EventListDOM = screen.getByTestId('event-list');
-    const allRenderedEventItems = within(EventListDOM).getAllByRole('listitem');
+    const EventListDOM = AppDOM.querySelector("#event-list");
+    const allRenderedEventItems =
+      within(EventListDOM).queryAllByRole("listitem");
 
-    const allEvents = await getCalendarEvents();
-    const berlinEvents = allEvents.filter(event => event.location === 'Berlin, Germany');
+    const allEvents = await getEvents();
+    const berlinEvents = allEvents.filter(
+      (event) => event.location === "Berlin, Germany"
+    );
 
     expect(allRenderedEventItems.length).toBe(berlinEvents.length);
 
-    allRenderedEventItems.forEach(event => {
+    allRenderedEventItems.forEach((event) => {
       expect(event.textContent).toContain("Berlin, Germany");
+    });
+  });
+
+  test("renders a list of events matching the number selected by the user", async () => {
+    const AppComponent = render(<App />);
+    const AppDOM = AppComponent.container.firstChild;
+    const EventListDOM = AppDOM.querySelector("#event-list");
+    await waitFor(() => {
+      const EventListItems = within(EventListDOM).queryAllByRole("listitem");
+      expect(EventListItems.length).toBe(32);
     });
   });
 });

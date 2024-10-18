@@ -3,7 +3,7 @@ import EventList from './components/EventList';
 import NumberOfEvents from './components/NumberOfEvents';
 import { useEffect, useState, useCallback } from 'react';
 import { extractLocations, getEvents } from './api';
-import { InfoAlert } from './components/Alert';
+import { InfoAlert, ErrorAlert } from './components/Alert';
 import './App.css';
 
 const App = () => {
@@ -12,43 +12,47 @@ const App = () => {
   const [events, setEvents] = useState([]);
   const [currentCity, setCurrentCity] = useState("See all cities");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const [infoAlert, setInfoAlert] = useState("");
 
   // Memoized function to fetch and filter events
   const fetchData = useCallback(async () => {
     setLoading(true);
-    setError(null);
+    setError("");
     try {
-      const allEvents = await getEvents(); // Fetch all events
-      console.log("Fetched events:", allEvents); // Log fetched events
-      const filteredEvents = currentCity === "See all cities" ?
-        allEvents :
-        allEvents.filter(event => event.location === currentCity); // Filter based on selected city
-      setEvents(filteredEvents.slice(0, currentNOE)); // Set the first `currentNOE` events
-      setAllLocations(extractLocations(allEvents)); // Update locations
+      const allEvents = await getEvents();
+      console.log("Fetched events:", allEvents);
+      const filteredEvents = currentCity === "See all cities" 
+        ? allEvents 
+        : allEvents.filter(event => event.location === currentCity);
+      
+      setEvents(filteredEvents.slice(0, currentNOE));
+      setAllLocations(extractLocations(allEvents));
     } catch (err) {
       console.error("Error fetching events:", err);
-      setError("Could not fetch events. Please try again later."); // Set error message
+      setError("Could not fetch events. Please try again later.");
     } finally {
-      setLoading(false); // Set loading to false after fetching
+      setLoading(false);
     }
   }, [currentCity, currentNOE]);
 
-  // Use useEffect to call fetchData on component mount and when dependencies change
   useEffect(() => {
-    fetchData(); // Call fetchData when the component mounts and dependencies change
-  }, [fetchData]); // Add fetchData to the dependency array
+    fetchData();
+  }, [fetchData]);
 
   return (
     <div className="App">
-    <div className="alerts-container">
-        {infoAlert.length ? <InfoAlert text={infoAlert}/> : null}
+      <div className="alerts-container">
+        {infoAlert && <InfoAlert text={infoAlert} />}
+        {error && <ErrorAlert text={error} />}
       </div>
-      <CitySearch allLocations={allLocations} setCurrentCity={setCurrentCity} setInfoAlert={setInfoAlert}/>
-      <NumberOfEvents setCurrentNOE={setCurrentNOE} />
+      <CitySearch 
+        allLocations={allLocations} 
+        setCurrentCity={setCurrentCity} 
+        setInfoAlert={setInfoAlert} 
+      />
+      <NumberOfEvents setCurrentNOE={setCurrentNOE} setError={setError} /> {/* Pass setError */}
       {loading && <p>Loading events...</p>} 
-      {error && <p className="error">{error}</p>}
       <EventList events={events} /> 
     </div>
   );

@@ -14,7 +14,7 @@ const Event = ({ event }) => {
   } = event || {}; // Destructure event and provide defaults
 
   return (
-    <li className="event" key={id}> {/* Add key prop for lists (not necessary here since it's in a map) */}
+    <li className="event" key={id}>
       <h2>{summary}</h2>
       <p className="event-location">{location}</p>
       <p className="event-date">

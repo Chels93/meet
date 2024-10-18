@@ -3,237 +3,190 @@
 
 /* Root variables for easy color management throughout the stylesheet */
 :root {
-  --primary-color: #219ebc; /* Blue color for primary buttons and interactive elements */
-  --secondary-color: #8ecae6; /* Light blue for backgrounds and accents */
-  --tertiary-color: #ffb703; /* UT orange for border box shadow */
-  --background-color: #fbf9f3; /* Light background color for the main body */
-  --text-color: #023047; /* Dark color for text, providing good contrast */
-  --suggestion-hover-color: #219ebc; /* Color when hovering over suggestions */
-  --event-border-color: #219ebc; /* Border color for event containers */
-  --shadow-color: rgba(0, 0, 0, 0.1); /* Light shadow color for elements */
-  --details-btn-color: #219ebc; /* Background color for the details button */
-  --details-btn-border-color: #219ebc; /* Border color for details button */
+  --primary-color: #219ebc;
+  --secondary-color: #8ecae6;
+  --tertiary-color: #ffb703;
+  --background-color: #fbf9f3;
+  --text-color: #023047;
+  --suggestion-hover-color: #219ebc;
+  --event-border-color: #ffb703;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --details-btn-color: #219ebc;
+  --details-btn-border-color: #219ebc;
 }
 
-/* Basic styles for the body element */
+/* Basic styles */
 body {
-  font-family: "Roboto", sans-serif; /* Setting Roboto as the primary font */
-  background-color: var(
-    --background-color
-  ); /* Background color from root variable */
-  color: var(--text-color); /* Text color from root variable */
-  line-height: 1.6; /* Spacing between lines for readability */
+  font-family: "Roboto", sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
 }
 
-/* Styles for the main application container */
 .App {
-  text-align: center; /* Center the text inside the app */
-  padding: 2% 5%; /* Add padding for better spacing */
-  background-color: white; /* White background for the app container */
-  box-shadow: 0px 4px 12px var(--shadow-color); /* Subtle shadow for depth */
-  transition: box-shadow 0.3s ease; /* Smooth transition effect for hover */
+  text-align: center;
+  padding: 2% 5%;
+  background-color: white;
+  box-shadow: 0px 4px 12px var(--shadow-color);
+  transition: box-shadow 0.3s ease;
 }
-
-/* Hover effect for the App container to enhance interactivity */
 .App:hover {
-  box-shadow: 0px 8px 24px var(--shadow-color); /* Increase shadow on hover */
+  box-shadow: 0px 8px 24px var(--shadow-color);
 }
-
-/* Ensuring all child elements of .App use box-sizing border-box */
 .App * {
-  box-sizing: border-box; /* Include padding and border in the element's total width/height */
+  box-sizing: border-box;
 }
 
-/* Styles for unordered lists */
 ul {
-  padding: 0; /* Remove default padding */
-  list-style: none; /* Remove default list styling */
+  padding: 0;
+  list-style: none;
   font-weight: 400;
 }
 
-/* Styles for paragraphs */
 p {
-  margin: 10px 0; /* Vertical margin for paragraphs */
-  font-family: "Playfair Display", serif; /* Decorative font for paragraph text */
-  font-size: 16px; /* Font size for paragraphs */
-  color: var(--text-color); /* Text color from root variable */
+  margin: 10px 0;
+  font-family: "Playfair Display", serif;
+  font-size: 16px;
+  color: var(--text-color);
 }
 
-/* Styles for text and number input fields */
+/* Input styles */
 input[type="text"],
 input[type="number"] {
-  padding: 10px; /* Padding for comfort */
-  border-radius: 4px; /* Slightly rounded corners */
-  outline: none; /* Remove default outline */
-  border: 2px solid #219ebc; /* Border color for inputs */
-  background-color: white; /* Background color for input fields */
-  font-size: 16px; /* Font size for input text */
-  line-height: 24px; /* Line height for better text appearance */
-  margin-bottom: 20px; /* Margin below inputs */
-  transition: border 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for focus effects */
+  padding: 10px;
+  border-radius: 4px;
+  border: 2px solid var(--primary-color);
+  background-color: white;
+  font-size: 16px;
+  margin-bottom: 20px;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
 }
-
-/* Styles for focused input fields */
-input[type="text"]:focus,
-input[type="number"]:focus {
-  border-color: var(--primary-color); /* Change border color on focus */
-  box-shadow: 0 0 6px var(--primary-color); /* Add shadow effect on focus */
+input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 6px var(--primary-color);
 }
-
-/* Specific width for the city input field */
 .city {
-  width: 250px; /* Fixed width for the city input */
+  width: 250px;
 }
 
-/* Container styles for city search */
+/* City Search Suggestions */
 #city-search {
-  display: flex; /* Use flexbox layout */
-  flex-direction: column; /* Stack children vertically */
-  margin: auto; /* Center the container */
-  position: relative; /* Positioning context for absolute children */
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  position: relative;
 }
 
-/* Styles for the suggestions dropdown */
 .suggestions {
-  width: 250px; /* Fixed width for suggestions dropdown */
-  position: absolute; /* Position relative to #city-search */
-  top: 45px; /* Position below the input field */
-  z-index: 2; /* Ensure it's above other elements */
-  margin: 0; /* Remove margin */
-  font-size: 16px; /* Font size for suggestions */
-  box-shadow: 0px 8px 16px var(--shadow-color); /* Shadow for dropdown */
-  background-color: white; /* Background color for dropdown */
-  border: 2px solid #219ebc; /* Border color for dropdown */
+  width: 250px;
+  position: absolute;
+  top: 45px;
+  z-index: 2;
+  margin: 0;
+  font-size: 16px;
+  box-shadow: 0px 8px 16px var(--shadow-color);
+  background-color: white;
+  border: 2px solid var(--primary-color);
   border-radius: 10px;
 }
 
-/* Styles for individual suggestion items */
 .suggestions > li {
-  text-align: left; /* Align text to the left */
-  padding: 10px; /* Padding for suggestion items */
-  background-color: white; /* Background color for suggestion items */
-  cursor: pointer; /* Pointer cursor on hover */
-  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+  text-align: left;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
-
-/* Hover effect for suggestion items */
 .suggestions > li:hover {
-    background-color: var(--suggestion-hover-color); /* Change background on hover */
-    color: #fbf9f3; /* Change text color on hover */
-  }
-  
-
-/* Styles for the last suggestion item */
-.suggestions > li:last-child {
-  border-bottom-left-radius: 4px; /* Rounded bottom corners */
-  border-bottom-right-radius: 4px; /* Rounded bottom corners */
+  background-color: var(--suggestion-hover-color);
+  color: var(--background-color);
 }
 
-/* Styles for individual event containers */
+/* Event Styles */
 .event {
-  padding: 15px; /* Padding inside event container */
-  margin-bottom: 10px; /* Margin below each event */
-  text-align: left; /* Align text to the left */
-  border: 2px solid #ffb703; /* Border color for event containers */
-  border-radius: 8px; /* Rounded corners for event containers */
-  background-color: transparent; /* Transparent background */
-  box-shadow: 0px 2px 8px var(--shadow-color); /* Shadow for event containers */
-  transition: transform 0.3s ease; /* Smooth transform on hover */
-  position: relative; /* Positioning context for child elements */
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: left;
+  border: 2px solid var(--event-border-color);
+  border-radius: 8px;
+  background-color: transparent;
+  box-shadow: 0px 2px 8px var(--shadow-color);
+  transition: transform 0.3s ease;
+  position: relative;
 }
-
-/* Hover effect for event containers */
 .event:hover {
-  transform: translateY(-2px); /* Lift effect on hover */
+  transform: translateY(-2px);
 }
 
-/* Styles for the event title */
 .event-title {
-  font-size: 24px; /* Font size for the title */
-  color: #023047; /* Title text color */
-  text-shadow: 2px 2px 2px #8ecae6; /* Light blue shadow for the title */
+  font-size: 24px;
+  color: var(--text-color);
+  text-shadow: 2px 2px 2px var(--secondary-color);
 }
 
-/* Styles for the details button */
+/* Adjusted Details Button Styles */
 .details-btn {
-    position: absolute;
-    right: 5px;
-    bottom: 5px;
-    padding: 8px 12px;
-    border-radius: 4px;
-    background-color: #023047;
-    color: white; /* Default text color for button */
-    cursor: pointer;
-    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-  }
-  
-  /* Hover effect for the details button */
-  .details-btn:hover {
-    background-color: var(--details-btn-color); /* Use the color defined in the variable */
-    color: #fbf9f3; /* Change text color on hover */
-  }
-  
-  /* Change the text color back to white when not hovered */
-  .details-btn:not(:hover) {
-    color: white; /* Default text color */
-  }
-  
-/* Styles for the hide details button */
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background-color: var(--text-color);
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.details-btn:hover {
+  background-color: var(--details-btn-color);
+  color: var(--background-color);
+}
+
+/* Adjustments to prevent overlapping */
+.event-content {
+  margin-bottom: 50px; /* Ensure space between content and button */
+}
 .hide-details-btn {
-  margin-top: 10px; /* Space above the button */
-  /* Other styles for the button */
+  margin-top: 10px;
 }
 
-/* Styles for Number of Events container */
+/* Number of Events Container */
 .number-of-events {
-  border: 2px solid #219ebc; /* Border color for Number of Events (changed) */
-  border-radius: 10px; /* Rounded corners for the container */
-  padding: 10px; /* Padding for the container */
+  border: 2px solid var(--primary-color);
+  border-radius: 10px;
+  padding: 10px;
 }
 
-/* Styles for event location */
+/* Event Location and Date Styles */
 .event-location {
-  font-size: 18px; /* Adjust font size as needed */
-  color: var(--primary-color); /* Use a color from your root variables */
-  margin: 5px 0; /* Margin for spacing */
-  font-weight: bolder; /* Medium boldness */
-  text-transform: uppercase; /* Optional: make text uppercase for emphasis */
+  font-size: 18px;
+  color: var(--primary-color);
+  margin: 5px 0;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
-/* Styles for event date/time */
 .event-date {
-  font-size: 16px; /* Adjust font size as needed */
-  color: var(--text-color); /* Use your text color variable */
-  margin: 5px 0; /* Margin for spacing */
-  font-weight: 400; /* Bold for stronger emphasis */
+  font-size: 16px;
+  color: var(--text-color);
+  margin: 5px 0;
 }
 
-/* Styles for Show Other Cities button */
+/* Show Other Cities Button */
 .show-other-cities {
-    border: 2px solid #219ebc; /* Border color for Show Other Cities */
-    border-radius: 10px; /* Rounded corners for the button */
-    padding: 10px; /* Padding for the button */
-    background-color: white; /* Background color for clarity */
-    cursor: pointer; /* Pointer cursor on hover */
-    transition: border-color 0.3s ease; /* Smooth transition for border color */
-  }
-  
-  /* Hover effect for the Show Other Cities */
-  .show-other-cities:hover {
-    border-color: #219ebc; /* Ensure the border color remains blue on hover */
-  }
-  
-  /* Prevent border color change on active click */
-  .show-other-cities:active,
-  .show-other-cities:focus {
-    border-color: #219ebc; /* Keep the border color blue when clicked or focused */
-  }
+  border: 2px solid var(--primary-color);
+  border-radius: 10px;
+  padding: 10px;
+  background-color: white;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+.show-other-cities:hover {
+  border-color: var(--primary-color);
+}
 
-  .alerts-container {
-    position: fixed;
-    top: 0px;
-    left: 20px;
-    width: 250px;
-    z-index: 1000;
-  }
-  
+/* Alerts Container */
+.alerts-container {
+  position: fixed;
+  top: 0px;
+  left: 20px;
+  width: 250px;
+  z-index: 1000;
+}

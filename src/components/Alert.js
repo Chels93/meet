@@ -8,7 +8,7 @@ class Alert extends Component {
   }
 
   getStyle = () => {
-    return {
+    return { 
       color: this.color,
       backgroundColor: this.bgColor,
       borderWidth: "2px",
@@ -33,11 +33,19 @@ class Alert extends Component {
 }
 
 class InfoAlert extends Alert {
-    constructor(props) {
-      super(props);
-      this.color = 'rgb(0, 0, 255)'; // blue
-      this.bgColor = 'rgb(220, 220, 255)'; // light blue
-    }
+  constructor(props) {
+    super(props);
+    this.color = "rgb(0, 0, 255)";
+    this.bgColor = "rgb(220, 220, 255)";
   }
+}
 
-  export { InfoAlert };
+class ErrorAlert extends Alert {
+  constructor(props) {
+    super(props);
+    this.color = "rgb(255, 0, 0)"; // Set the text color to red
+    this.bgColor = "rgb(255, 220, 220)"; // Set the background color to a light red
+  }
+}
+
+export { InfoAlert, ErrorAlert }; // Export both InfoAlert and ErrorAlert
