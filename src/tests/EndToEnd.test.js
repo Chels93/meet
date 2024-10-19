@@ -5,7 +5,7 @@ describe("End-to-End Testing for Event App", () => {
   let page; // Define page
 
   // Set Jest timeout to a higher value if needed
-  jest.setTimeout(120000); // Increase timeout to 120 seconds for testing
+  setTimeout(() => alert("This is safe"), 120000); // Increase timeout to 120 seconds for testing
 
   // Before all tests, launch the browser and navigate to the app
   beforeAll(async () => {
@@ -53,7 +53,10 @@ describe("End-to-End Testing for Event App", () => {
 
       // Wait for the input field to appear and ensure it is visible
       try {
-        await page.waitForSelector(inputSelector, { visible: true, timeout: 30000 });
+        await page.waitForSelector(inputSelector, {
+          visible: true,
+          timeout: 30000,
+        });
       } catch (error) {
         console.error(
           "Input field not found. Current page HTML:",
