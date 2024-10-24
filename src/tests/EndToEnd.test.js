@@ -5,7 +5,12 @@ describe("End-to-End Testing for Event App", () => {
   let page; // Define page
 
   // Set Jest timeout to a higher value if needed
-  setTimeout(() => alert("This is safe"), 120000); // Increase timeout to 120 seconds for testing
+  const safeAlert = () => {
+    alert("This is safe");
+  };
+
+  // Set timeout to call the safeAlert function
+  setTimeout(safeAlert, 120000); // Increase timeout to 120 seconds for testing
 
   // Before all tests, launch the browser and navigate to the app
   beforeAll(async () => {
@@ -72,6 +77,7 @@ describe("End-to-End Testing for Event App", () => {
       console.log("Typing '10' into the input field.");
       await page.type(inputSelector, "10", { delay: 100 });
 
+      // Trigger the change event to update the number of events
       await page.evaluate((selector) => {
         const input = document.querySelector(selector);
         if (input) {
@@ -81,45 +87,47 @@ describe("End-to-End Testing for Event App", () => {
 
       await page.waitForTimeout(1000); // Wait for the events to be updated
 
-      const eventItemsCount = await page.$$eval(
-        ".event",
-        (events) => events.length
-      );
+      // Get the elements with the class 'event' and count them
+      const events = await page.$$(".event"); // Get the array of elements directly
+      const eventItemsCount = events.length; // Count the elements
       expect(eventItemsCount).toBe(10); // Ensure only 10 events are displayed
     });
+  });
 
-    // Tests for filtering events by city
-    describe("Filter Events by City", () => {
-      test("When user hasn’t searched for a city, show upcoming events from all cities", async () => {
-        const events = await page.$(".event");
-        expect(events).toBeDefined();
-      });
+  // Tests for filtering events by city
+  describe("Filter Events by City", () => {
+    test("When user hasn’t searched for a city, show upcoming events from all cities", async () => {
+      const events = await page.$(".event");
+      expect(events).toBeDefined();
+    });
 
-      test("User should see a list of suggestions when they search for a city", async () => {
-        await page.type("#city-search input", "Berlin", { delay: 100 }); // Type "Berlin" with a delay
-        await page.waitForTimeout(500); // Wait for suggestions to appear
-        const suggestionItemsCount = await page.$$eval(
-          ".suggestions li",
-          (suggestions) => suggestions.length
-        );
-        expect(suggestionItemsCount).toBeGreaterThan(0); // Ensure city suggestions appear
-      });
+    test("User should see a list of suggestions when they search for a city", async () => {
+      await page.type("#city-search input", "Berlin", { delay: 100 }); // Type "Berlin" with a delay
+      await page.waitForTimeout(500); // Wait for suggestions to appear
 
-      test("User can select a city from the suggested list", async () => {
-        await page.click(".suggestions li:first-child"); // Select the first city suggestion
-        await page.waitForTimeout(500); // Wait for the city to be selected and input to update
-        const citySearchValue = await page.$eval(
-          "#city-search input",
-          (input) => input.value.trim()
-        ); // Trim whitespace from the input value
-        expect(citySearchValue).toBe("Berlin, Germany"); // Ensure the correct city is selected
+      // Get the suggestion elements and count them
+      const suggestions = await page.$$(".suggestions li"); // Get the array of suggestion elements
+      const suggestionItemsCount = suggestions.length; // Count the elements
 
-        const eventItemsCount = await page.$$eval(
-          ".event",
-          (events) => events.length
-        );
-        expect(eventItemsCount).toBeGreaterThan(0); // Ensure events are shown for Berlin
-      });
+      expect(suggestionItemsCount).toBeGreaterThan(0); // Ensure city suggestions appear
+    });
+
+    test("User can select a city from the suggested list", async () => {
+      await page.click(".suggestions li:first-child"); // Select the first city suggestion
+      await page.waitForTimeout(500); // Wait for the city to be selected and input to update
+
+      // Get the value of the city search input
+      const citySearchValue = await page.$eval("#city-search input", (input) =>
+        input.value.trim()
+      ); // Trim whitespace from the input value
+
+      expect(citySearchValue).toBe("Berlin, Germany"); // Ensure the correct city is selected
+
+      // Get the event elements and count them
+      const events = await page.$$(".event"); // Get the array of event elements
+      const eventItemsCount = events.length; // Count the elements
+
+      expect(eventItemsCount).toBeGreaterThan(0); // Ensure events are shown for Berlin
     });
   });
 });

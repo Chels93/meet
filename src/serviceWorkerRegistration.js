@@ -11,9 +11,7 @@
 
 const isLocalhost = Boolean(
     window.location.hostname === 'localhost' ||
-    // [::1] is the IPv6 localhost address.
     window.location.hostname === '[::1]' ||
-    // 127.0.0.0/8 are considered localhost for IPv4.
     window.location.hostname.match(
       /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
     )
@@ -25,7 +23,6 @@ const isLocalhost = Boolean(
   
       if (publicUrl.origin !== window.location.origin) {
         // Service worker won't work if PUBLIC_URL is on a different origin from the page.
-        // This may occur if assets are served via a CDN.
         return;
       }
   

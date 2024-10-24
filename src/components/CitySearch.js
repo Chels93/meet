@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 const CitySearch = ({ allLocations, setCurrentCity, setInfoAlert }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
   const handleItemClicked = (event) => {
@@ -10,7 +10,7 @@ const CitySearch = ({ allLocations, setCurrentCity, setInfoAlert }) => {
     setQuery(value);
     setShowSuggestions(false);
     setCurrentCity(value);
-    setInfoAlert('');
+    setInfoAlert("");
   };
 
   const handleInputChanged = (event) => {
@@ -26,8 +26,8 @@ const CitySearch = ({ allLocations, setCurrentCity, setInfoAlert }) => {
 
     const infoText =
       filteredLocations.length === 0
-        ? 'We cannot find the city you are looking for. Please try another city'
-        : '';
+        ? "We cannot find the city you are looking for. Please try another city"
+        : "";
     setInfoAlert(infoText);
   };
 
@@ -41,6 +41,7 @@ const CitySearch = ({ allLocations, setCurrentCity, setInfoAlert }) => {
         Search City:
         <input
           type="text"
+          id="city" // Add this line
           className="city"
           value={query}
           placeholder="Search for a city..."
@@ -54,14 +55,23 @@ const CitySearch = ({ allLocations, setCurrentCity, setInfoAlert }) => {
           data-testid="city-input"
         />
       </label>
+
       {showSuggestions && (
         <ul className="suggestions" data-testid="suggestions-list">
           {suggestions.map((suggestion) => (
-            <li key={suggestion} onClick={handleItemClicked} data-testid="suggestion-item">
+            <li
+              key={suggestion}
+              onClick={handleItemClicked}
+              data-testid="suggestion-item"
+            >
               {suggestion}
             </li>
           ))}
-          <li key="See all cities" onClick={handleItemClicked} data-testid="suggestion-item">
+          <li
+            key="See all cities"
+            onClick={handleItemClicked}
+            data-testid="suggestion-item"
+          >
             <b>See all cities</b>
           </li>
         </ul>

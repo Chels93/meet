@@ -15,7 +15,7 @@ export const getAccessToken = async () => {
     if (!code) {
       console.log("No authorization code found, fetching auth URL...");
       const response = await fetch(
-        "https://dsis4bopxi.execute-api.us-east-1.amazonaws.com/dev/api/get-auth-url"
+        "https://act2r8xhmk.execute-api.us-east-1.amazonaws.com/dev/api/get-auth-url"
       );
       const result = await response.json();
       const { authUrl } = result;
@@ -51,7 +51,7 @@ const checkToken = async (accessToken) => {
 const getToken = async (code) => {
   const encodeCode = encodeURIComponent(code);
   const response = await fetch(
-    "https://dsis4bopxi.execute-api.us-east-1.amazonaws.com/dev/api/token" +
+    "https://act2r8xhmk.execute-api.us-east-1.amazonaws.com/dev/api/token" +
       "/" +
       encodeCode
   );
@@ -77,7 +77,7 @@ export const getEvents = async () => {
   if (token) {
     removeQuery();
     const url =
-      "https://dsis4bopxi.execute-api.us-east-1.amazonaws.com/dev/api/get-events" +
+      "https://act2r8xhmk.execute-api.us-east-1.amazonaws.com/dev/api/get-events" +
       "/" +
       token;
     const response = await fetch(url);
