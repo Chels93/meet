@@ -45,5 +45,12 @@
         "sizes": "720x352",
         "type": "image/png"
       }
+    ],
+    "protocol_handlers": [
+      {
+        "protocol": "web+meet",
+        "url": "/meet/?url=%s"
+      }
     ]
   }
+  
