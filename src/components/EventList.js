@@ -14,7 +14,7 @@ const EventList = ({ events = [], citySearch }) => {
           <Event key={event.id} event={event} />
         ))
       ) : (
-        <li>No events found.</li> // Optional: Display a message if no events match the filter
+        <li>No events found.</li> 
       )}
     </ul>
   );

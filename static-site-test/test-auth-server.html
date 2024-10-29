@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Test Auth Server</title>
+    
+    <!-- Content Security Policy to restrict script sources -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' https://act2r8xhmk.execute-api.us-east-1.amazonaws.com; object-src 'none';"
+    />
   </head>
 
   <body>
@@ -33,8 +39,8 @@
         from the URI.
       </p>
       <br />
-      <label for="code"
-        >Code input
+      <label for="code">
+        Code input
         <input id="code" type="text" value="" />
       </label>
       <button id="getToken">Get Token</button>
@@ -46,9 +52,9 @@
       <p id="events"></p>
     </main>
 
-    <!-- New line of Code for Script starts here -->
+    <!-- JavaScript Section -->
     <script type="text/javascript">
-      // Step 1
+      // Step 1: Fetch Auth URL
       const getAuthUrlButton = document.getElementById("getAuthUrlButton");
       const resultElement = document.getElementById("result");
       const resultLink = document.getElementById("authURL");
@@ -62,14 +68,15 @@
           })
           .then(function (json) {
             const result = JSON.stringify(json);
-            // get the value of the authUrl
+            // Extract the authUrl from the response
             const { authUrl } = JSON.parse(result);
-            // add it to the html
+            // Display the authUrl
             resultElement.innerText = result;
             resultLink.href = authUrl;
           });
       };
-      // Step 2
+
+      // Step 2: Exchange code for access token
       const codeValue = document.getElementById("code");
       const getAccessToken = document.getElementById("getToken");
       const accessTokenElement = document.getElementById("accessToken");
@@ -81,7 +88,7 @@
         if (decodeURIComponent(code) === code) {
           code = encodeURIComponent(codeValue.value);
         }
-        const getTokenRequest = getToken + "/" + code;
+        const getTokenRequest = `${getToken}/${code}`;
 
         fetch(getTokenRequest)
           .then(function (response) {
@@ -92,7 +99,7 @@
           });
       };
 
-      // Step 3
+      // Step 3: Fetch calendar events using access token
       const getEvents = document.getElementById("getEvents");
       const events = document.getElementById("events");
       const getCalendarEvents =
@@ -100,7 +107,8 @@
 
       getEvents.onclick = function () {
         const { access_token } = JSON.parse(accessTokenElement.innerText);
-        const eventRequest = getCalendarEvents + "/" + access_token;
+        const eventRequest = `${getCalendarEvents}/${access_token}`;
+
         fetch(eventRequest)
           .then(function (response) {
             return response.json();
@@ -109,7 +117,6 @@
             events.innerText = JSON.stringify(json, null, 2);
           });
       };
-      // End of Step 3
     </script>
   </body>
 </html>
