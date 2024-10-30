@@ -9,7 +9,7 @@ describe('<NumberOfEvents /> component', () => {
 
   beforeEach(() => {
     setCurrentNOE = jest.fn(); // Mock the setter function
-    render(<NumberOfEvents setCurrentNOE={setCurrentNOE} />); // Render component before each test
+    render(<NumberOfEvents setCurrentNOE={setCurrentNOE} setErrorAlert={() => {}} />); // Render component before each test
   });
 
   test('renders number of events text input', () => {
