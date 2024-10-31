@@ -1,7 +1,7 @@
 {
     "id": "/meet/",
-    "short_name": "React App",
-    "name": "Create React App Sample",
+    "short_name": "MeetApp",
+    "name": "MeetApp - Event Planner",
     "icons": [
       {
         "src": "favicon.ico",
