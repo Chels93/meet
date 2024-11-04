@@ -97,8 +97,8 @@ describe("End-to-End Testing for Event App", () => {
   // Tests for filtering events by city
   describe("Filter Events by City", () => {
     test("When user hasn’t searched for a city, show upcoming events from all cities", async () => {
-      const events = await page.$(".event");
-      expect(events).toBeDefined();
+      const events = await page.$$(".event"); // Get all event elements
+      expect(events.length).toBeGreaterThan(0); // Ensure there are events displayed
     });
 
     test("User should see a list of suggestions when they search for a city", async () => {

@@ -1,7 +1,9 @@
 /* eslint-disable no-restricted-globals */
 
+// Define the service worker URL
 const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
 
+// Function to register the service worker
 export const register = (config) => {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -13,7 +15,7 @@ export const register = (config) => {
             config.onSuccess(registration);
           }
 
-          // Optionally handle updates to the service worker
+          // Handle updates to the service worker
           registration.onupdatefound = () => {
             const installingWorker = registration.installing;
             if (installingWorker) {
@@ -41,6 +43,7 @@ export const register = (config) => {
   }
 };
 
+// Function to unregister the service worker
 export const unregister = () => {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.ready

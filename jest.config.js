@@ -1,6 +1,7 @@
 module.exports = {
     preset: 'jest-puppeteer',
-    testEnvironment: 'jsdom', // or 'node' depending on your needs
+    testMatch: ['**/tests/**/*.test.js'],
+    testEnvironment: 'node', // or 'node' depending on your needs
     testTimeout: 30000,
     setupFilesAfterEnv: ['<rootDir>/setupTests.js'],
     verbose: true,

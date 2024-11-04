@@ -3,18 +3,17 @@ import Event from './Event';
 const EventList = ({ events = [], citySearch }) => {
   // Filter events based on the city search input
   const filteredEvents = events.filter(event => {
-    // Return all events if no city search input is provided, otherwise filter by location
     return !citySearch || event.location.includes(citySearch);
   });
 
   return (
-    <ul id="event-list" role="list">
+    <ul>
       {filteredEvents.length > 0 ? (
-        filteredEvents.map(event => (
-          <Event key={event.id} event={event} />
+        filteredEvents.map((event, index) => (
+          <Event key={`${event.id}-${index}`} event={event} />
         ))
       ) : (
-        <li>No events found.</li> 
+        <li>No events found.</li> // Optional: Display a message if no events match the filter
       )}
     </ul>
   );

@@ -190,3 +190,17 @@ input:focus {
   width: 250px;
   z-index: 1000;
 }
+
+/* Step 1: Charts Container */
+.charts-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two columns for charts */
+  gap: 20px; /* Add some space between the charts */
+}
+
+/* Step 2: Media Query for Smaller Screens */
+@media (max-width: 768px) {
+  .charts-container {
+    grid-template-columns: 1fr; /* One column for smaller screens */
+  }
+}
