@@ -4,40 +4,12 @@ import {
   Pie,
   Cell,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
 
 // Define colors for pie chart slices
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#FF5858"];
 const genres = ["React", "JavaScript", "Node", "jQuery", "Angular"];
-
-// Custom label renderer for pie chart segments to show percentage and genre
-const renderCustomizedLabel = ({
-  cx,
-  cy,
-  midAngle,
-  outerRadius,
-  percent,
-  index,
-}) => {
-  const radius = outerRadius * 0.7; // Adjust the position of the label
-  const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180));
-  const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180));
-
-  return percent ? (
-    <text
-      x={x}
-      y={y}
-      fill="#fff" // Change label color to white for better contrast
-      textAnchor={x > cx ? "start" : "end"}
-      dominantBaseline="central"
-    >
-      {`${genres[index]} ${(percent * 100).toFixed(0)}%`}{" "}
-      {/* Display genre and percentage */}
-    </text>
-  ) : null;
-};
 
 // EventGenresChart component
 const EventGenresChart = ({ events }) => {
@@ -74,10 +46,9 @@ const EventGenresChart = ({ events }) => {
           data={data}
           cx="50%"
           cy="50%"
-          labelLine={false}
-          label={renderCustomizedLabel} // Use customized label function
-          outerRadius={130}
-          fill="#8884d8"
+          labelLine={false} // Disable label lines for cleaner look
+          label={renderCustomizedLabel} // Use custom labels for outer rim
+          outerRadius={130} // Decrease outer radius for smaller chart
           dataKey="value"
         >
           {data.map((entry, index) => (
@@ -85,10 +56,26 @@ const EventGenresChart = ({ events }) => {
           ))}
         </Pie>
         <Tooltip />
-        <Legend />
       </PieChart>
     </ResponsiveContainer>
   );
 };
 
-export default EventGenresChart; // Export component for use in other parts of the application
+// Custom label function to render labels on the outer rim of the pie chart
+const renderCustomizedLabel = ({ cx, cy, midAngle, outerRadius, name, value, index }) => {
+  const RADIAN = Math.PI / 180;
+  const spacing = 50; // Increase this value for more spacing
+  const x = cx + (outerRadius + spacing) * Math.cos(-midAngle * RADIAN); // Adjust position for outer rim with spacing
+  const y = cy + (outerRadius + spacing) * Math.sin(-midAngle * RADIAN); // Adjust position for outer rim with spacing
+
+  // Get the color for the current slice based on index
+  const fill = COLORS[index % COLORS.length]; // Match the label color with the pie slice color
+
+  return (
+    <text x={x} y={y} fill={fill} textAnchor="middle" dominantBaseline="middle">
+      {`${name} (${value})`}
+    </text>
+  );
+};
+
+export default EventGenresChart;
