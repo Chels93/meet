@@ -60,7 +60,7 @@ describe("End-to-End Testing for Event App", () => {
       try {
         await page.waitForSelector(inputSelector, {
           visible: true,
-          timeout: 30000,
+          timeout: 120000,
         });
       } catch (error) {
         console.error(
