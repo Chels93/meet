@@ -35,4 +35,4 @@ console.error = (...args) => {
   if (!ignoreMessage) originalError(...args);
 };
 
-jest.setTimeout(120000);
+jest.setTimeout(30000);
