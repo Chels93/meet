@@ -1,32 +1,29 @@
 OBJECTIVE:
 To build a serverless, progressive web application (PWA) with React using a
-test-driven development (TDD) technique. The application uses the Google
-Calendar API to fetch upcoming events.
+test-driven development (TDD) technique. The application fetches upcoming events using the Google Calendar API.
 
-PROJECT REQUIREMENTS: 
-Key Features:
-● Filter Events by City.
-● Show/Hide Event Details.
-● Specify Number of Events.
-● Use the App When Offline.
-● Add an App Shortcut to the Home Screen.
-● Display Charts Visualizing Event Details.
-Technical Requirements:
-● The app must be a React application.
-● The app must be built using the TDD technique.
-● The app must use the Google Calendar API and OAuth2 authentication flow.
-● The app must use serverless functions (AWS lambda is preferred) for the authorization server instead of using a traditional server.
-● The app’s code must be hosted in a Git repository on GitHub.
-● The app must work on the latest versions of Chrome, Firefox, Safari, Edge, and Opera, as well as on IE11.
-● The app must display well on all screen sizes (including mobile and tablet) widths of 1920px and 320px.
-● The app must pass Lighthouse’s PWA checklist.
-● The app must work offline or in slow network conditions with the help of a service worker.
-● Users may be able to install the app on desktop and add the app to their home screen on mobile.
-● The app must be deployed on GitHub Pages.
-● The app must implement an alert system using an OOP approach to show information to the user.
-● The app must make use of data visualization.
-● The app must be covered by tests with a coverage rate >= 90%.
-● The app must be monitored using an online performance monitoring tool.
+FEATURES: 
+- Filter Events by City
+- Show/Hide Event Details
+- Specify Number of Events
+- Use the App When Offline
+- Add an App Shortcut to the Home Screen
+- Display Charts Visualizing Event Details
+
+TECHNICAL REQUIREMENTS:
+- Frontend: React-based single-page application (SPA)
+- TDD: Built with a test-driven development approach
+- Serverless Architecture: Utilizes AWS Lambda for backend functions
+- Google Calendar API: OAuth2 authentication for secure access to event data
+- Cross-Browser Support: Compatible with Chrome, Firefox, Safari, Edge, Opera, and IE11
+- Responsive Design: Optimized for screen widths ranging from 320px (mobile) to 1920px (desktop)
+- Progressive Web App: Passes Lighthouse PWA checklist, supports offline use, and provides an "Add to Home Screen" feature
+- Alert System: Implements object-oriented programming (OOP) for user notifications
+- Data Visualization: Interactive and visually appealing charts to summarize event data
+- Deployment: Hosted on GitHub Pages
+- Testing: Coverage rate >= 90%, with unit, integration, and end-to-end tests
+- Performance Monitoring: Integrated with an online application performance monitoring tool
+
 
 USER STORIES AND SCENARIOS: (Gherkin Syntax)
 -	Filter Events by City
@@ -67,3 +64,17 @@ SERVERLESS FUNCTIONS PURPOSE:
 - Facilitate ideal integration of calendar data into frontend by having serverless functions interact with REACT PWA via API endpoints 
 - Efficiently utilize cloud resources 
 
+TECHNICAL STACK:
+- React: for building the user interface
+- AWS Lambda: for serverless backend implementation
+- Google Calendar API: to fetch event data 
+- Testing Frameworks: Jest and Enzyme for unit and integration Testing
+- Service Worker: for offline support and caching
+- D3.js/Chart.js: for data Visualization
+- GitHub Pages: for app Deployment
+- Lighthouse: for PWA compliance 
+
+DEPLOYMENT:
+- Install dependencies using: npm install
+- Run the server using: npm start 
+- Github link: https://github.com/Chels93/meet
